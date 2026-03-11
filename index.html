@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIAM FENTI | ARCHIVE_V15_STABLE</title>
+    <title>LIAM FƎNTI | ARCHIVE_V15_STABLE</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2300ff95'/><text y='80' x='15' font-family='monospace' font-size='90' font-weight='bold' fill='%23000'>_</text></svg>">
     
     <style>
@@ -112,6 +112,7 @@
             letter-spacing: 1px;
             cursor: grab; 
             user-select: none;
+            touch-action: none; /* CORREÇÃO MOBILE: Impede rolagem ao arrastar */
         }
         .monitor-header:active { cursor: grabbing; }
         .floating-monitor video {
@@ -234,6 +235,8 @@
             .purple-protocol .secret-terminal { border-top: 1px solid rgba(160, 32, 240, 0.4); border-left: none; }
             
             main { flex: 1; overflow-y: auto; padding: 15px; max-height: none; } 
+            
+            #title-liam { animation: neonFlicker 3.2s infinite alternate !important; }
         }
     </style>
 </head>
@@ -260,7 +263,7 @@
     <header>
         <div>
             <div style="font-size: 9px; opacity: 0.5;">ROOT:/LIAM/ARCHIVE/</div>
-            <h1 id="title-liam" onclick="liamViolation()">LIAM FENTI</h1>
+            <h1 id="title-liam" onclick="liamViolation()">LIAM F<span style="display: inline-block; transform: scaleX(-1);">E</span>NTI</h1>
         </div>
         <div class="system-info">
             <div id="clock">00:00:00</div>
@@ -293,7 +296,7 @@
 
     // --- GLITCH DA ABA DO NAVEGADOR ---
     function startTitleGlitch() {
-        const originalTitle = "LIAM FENTI | ARCHIVE_V15_STABLE";
+        const originalTitle = "LIAM FƎNTI | ARCHIVE_V15_STABLE";
         const glitches = ["L!4M F3NT1 | C0RRUPT3D", "01001100 01101001", "SYS_FAIL | V15", "L*** F**** | UNKNOWN"];
         setInterval(() => {
             if (Math.random() > 0.6) {
@@ -417,8 +420,7 @@
         monitor.style.top = startY + 'px';
         monitor.style.opacity = '0';
 
-        vid.src = sideVideos[Math.floor(Math.random() * sideVideos.length)];
-        
+        // CORREÇÃO: Define o evento onloadedmetadata ANTES de definir o src do vídeo
         vid.onloadedmetadata = () => {
             if (vid.duration > 13) { vid.currentTime = Math.random() * (vid.duration - 13); }
             vid.play().catch(e => {});
@@ -435,6 +437,8 @@
             vid.onloadedmetadata = null;
             monitor.driftTimeout = setTimeout(() => { startDrift(monitor); }, duration + 400);
         };
+
+        vid.src = sideVideos[Math.floor(Math.random() * sideVideos.length)];
 
         monitor.driftTimeout = setTimeout(() => {
             if (monitor.style.opacity === '0') {
@@ -530,7 +534,8 @@
     function syncVideo(audioId, vizId, vidId) {
         const audio = document.getElementById(audioId), viz = document.getElementById(vizId), video = document.getElementById(vidId);
         if(!audio || !viz || !video) return;
-        audio.onplay = () => { viz.style.display = 'block'; video.play(); };
+        // CORREÇÃO: Adicionado .catch() para evitar quebra caso o autoplay seja bloqueado pelo navegador
+        audio.onplay = () => { viz.style.display = 'block'; video.play().catch(e => console.log("Autoplay bloqueado", e)); };
         audio.onpause = () => { video.pause(); viz.style.display = 'none'; };
         audio.onended = () => { video.pause(); viz.style.display = 'none'; };
     }
@@ -608,6 +613,9 @@
         const sequence = [{ t: "I am just an ordinary ", e: false }, { t: "painter", e: true, c: "producer" }, { t: "—or so they say. I see the world exactly as it was presented to me: a sequence of ", e: false }, { t: "colors", e: true, c: "frequencies" }, { t: " that have lost their luster. To me, the world lost its color a long time ago, leaving behind only the gray of static and the green of terminal code.\n\nThis site is not a ", e: false }, { t: "business", e: true, c: "sanctuary" }, { t: ". It’s a place for the ", e: false }, { t: "normal", e: true, c: "misfits" }, { t: ". It’s a place for the ", e: false }, { t: "engineers", e: true, c: "creatives" }, { t: " who find beauty in the ", e: false }, { t: "perfection", e: true, c: "glitch" }, { t: ", in the noise, and in what others call distortion.\n\nIf you feel like a stranger in your own reality, you have found the right archive.", e: false }];
         let step = 0, charIdx = 0, isDeleting = false;
         function type() {
+            // CORREÇÃO: Impede vazamento de memória cancelando o loop se o usuário trocar de aba
+            if (!document.body.contains(el)) return; 
+
             const current = sequence[step]; if (!current) { el.innerHTML += '<span class="blink-underline"></span>'; return; }
             const fullText = current.t;
             if (!isDeleting) {
