@@ -7,6 +7,20 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap');
 
+        /* --- TELA DE BOOT INICIAL --- */
+        #boot-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 20000; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            font-family: monospace; color: #00ff95; text-shadow: 0 0 5px #00ff95;
+        }
+        #boot-loader-bar { width: 200px; height: 2px; background: rgba(0,255,149,0.2); margin-top: 10px; position: relative; }
+        #boot-progress { height: 100%; background: #00ff95; width: 0%; box-shadow: 0 0 10px #00ff95; }
+
+        /* --- ANIMAÇÕES DE ENTRADA --- */
+        .fade-in-element { opacity: 0; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
+        .fade-in-visible { opacity: 1; transform: translateY(0); }
+
         /* --- FILTRO VHS INTENSO & VINHETA SUAVE --- */
         body::before {
             content: " "; display: block; position: fixed;
@@ -33,6 +47,7 @@
             background: #b20000; color: #fff; font-family: sans-serif;
             font-size: 11px; font-weight: bold; padding: 6px 0; z-index: 1000;
             border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap;
+            opacity: 0; transition: opacity 2s ease;
         }
         .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
         @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
@@ -79,6 +94,7 @@
             box-shadow: 0 0 50px rgba(0,0,0,1);
             transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg);
             border-radius: 10px;
+            opacity: 0; transition: opacity 2s ease;
         }
 
         header {
@@ -145,7 +161,13 @@
 </head>
 <body id="main-body">
 
-<div class="news-ticker">
+<div id="boot-screen">
+    <div style="font-size: 10px; margin-bottom: 5px;">INITIALIZING_LIAM_V15</div>
+    <div id="boot-perc">0%</div>
+    <div id="boot-loader-bar"><div id="boot-progress"></div></div>
+</div>
+
+<div class="news-ticker" id="ticker-news">
     <div class="ticker-text">
         ::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::
     </div>
@@ -164,12 +186,12 @@
     </header>
 
     <div class="archive-body">
-        <nav>
-            <div id="audio-btn" class="nav-item" onclick="tabAction(this, 'audio')">AUDIO.DAT</div>
-            <div id="visual-tab" class="nav-item" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
-            <div class="nav-item" onclick="tabAction(this, 'feed')">FEED.TXT</div>
-            <div id="id-btn" class="nav-item" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
-            <a href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item" style="color:#00ff95">SHOP_NOW.EXE</a>
+        <nav id="sidebar-nav">
+            <div id="audio-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'audio')">AUDIO.DAT</div>
+            <div id="visual-tab" class="nav-item fade-in-element" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
+            <div class="nav-item fade-in-element" onclick="tabAction(this, 'feed')">FEED.TXT</div>
+            <div id="id-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
+            <a href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element" style="color:#00ff95">SHOP_NOW.EXE</a>
         </nav>
 
         <main id="viewport-scroll">
@@ -182,6 +204,57 @@
 <script>
     let clicks = 0;
     let locked = false;
+
+    // --- LOGICA DE BOOT INICIAL ---
+    function runBoot() {
+        const perc = document.getElementById('boot-perc');
+        const bar = document.getElementById('boot-progress');
+        const screen = document.getElementById('boot-screen');
+        const archive = document.getElementById('archive-container');
+        const ticker = document.getElementById('ticker-news');
+        const navItems = document.querySelectorAll('.fade-in-element');
+        
+        let progress = 0;
+        
+        const update = () => {
+            // Pequenos "travamentos" aleatórios
+            let increment = Math.random() * 1.5;
+            if (progress > 20 && progress < 25) increment = 0.1; 
+            if (progress > 60 && progress < 68) increment = 0.05;
+            if (progress > 85 && progress < 92) increment = 0.2;
+
+            progress += increment;
+            if (progress > 100) progress = 100;
+            
+            perc.innerText = `${Math.floor(progress)}%`;
+            bar.style.width = `${progress}%`;
+
+            if (progress < 100) {
+                setTimeout(update, 100);
+            } else {
+                setTimeout(() => {
+                    screen.style.transition = "opacity 1s";
+                    screen.style.opacity = "0";
+                    setTimeout(() => {
+                        screen.style.display = "none";
+                        // Iniciar entrada lenta dos elementos
+                        archive.style.opacity = "1";
+                        ticker.style.opacity = "1";
+                        
+                        // Revelar abas uma a uma
+                        navItems.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.classList.add('fade-in-visible');
+                            }, (index + 1) * 400);
+                        });
+
+                        tabAction(document.getElementById('audio-btn'), 'audio');
+                    }, 1000);
+                }, 800);
+            }
+        };
+        update();
+    }
 
     function startSystemInfo() {
         const updateClock = () => {
@@ -243,6 +316,7 @@
             m.classList.add('blink-alert');
             m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK.";
             vTab.style.display = 'block';
+            vTab.classList.add('fade-in-visible');
             setTimeout(() => { reboot(); }, 5000);
         } else {
             l.style.display = 'flex';
@@ -455,7 +529,7 @@
     window.onload = () => {
         startSystemInfo();
         triggerGlitch();
-        tabAction(document.getElementById('audio-btn'), 'audio');
+        runBoot(); // Inicia o carregamento de 15s
     };
 </script>
 </body>
