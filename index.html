@@ -9,24 +9,49 @@
 
         /* --- DESATIVAR DOWNLOADS & VELOCIDADE --- */
         video, audio { -webkit-user-select: none; user-select: none; }
-        
-        /* Remove o menu de opções (três pontinhos) e velocidade */
-        video::-webkit-media-controls-timeline, 
-        video::-webkit-media-controls-current-time-display,
-        video::-webkit-media-controls-time-remaining-display,
-        video::-webkit-media-controls-mute-button,
-        video::-webkit-media-controls-volume-slider { display: flex; } /* Mantém o básico */
-
-        /* Esconde especificamente o botão de download e o menu de configurações/velocidade */
         video::-internal-media-controls-download-button, 
         audio::-internal-media-controls-download-button { display:none !important; }
-        
         video::-webkit-media-controls-enclosure, 
         audio::-webkit-media-controls-enclosure { overflow:hidden; }
-
-        /* Tenta esconder o botão de overflow (três pontos) no Chrome/Safari */
         video::-webkit-media-controls-panel { width: calc(100% + 35px); }
         audio::-webkit-media-controls-panel { width: calc(100% + 35px); }
+
+        /* --- CONFIGURAÇÃO BASE TÍTULO E SHOP --- */
+        #title-liam, #shop-btn { 
+            color: #00ff95; 
+            transition: text-shadow 0.2s ease, transform 0.2s ease, color 0.3s ease; 
+            text-decoration: none;
+        }
+
+        /* --- ANIMAÇÃO LÂMPADA ANTIGA (FLICKER ALEATÓRIO) --- */
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            3% { opacity: 0.2; text-shadow: none; }
+            6% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            7% { opacity: 0.4; text-shadow: none; }
+            8% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            9% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            10% { opacity: 0.1; text-shadow: none; }
+            11% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            30% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            31% { opacity: 0.3; text-shadow: none; }
+            33% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            50% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            51% { opacity: 0.5; text-shadow: none; }
+            52% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            70% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            72% { opacity: 0.2; text-shadow: none; }
+            73% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            90% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+            91% { opacity: 0.4; text-shadow: none; }
+            92% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+        }
+
+        #title-liam:hover, #shop-btn:hover {
+            animation: neonFlicker 3.2s infinite alternate; 
+            transform: scale(1.02);
+            color: #fff;
+        }
 
         /* --- TELA DE BOOT INICIAL --- */
         #boot-screen {
@@ -38,11 +63,7 @@
         #boot-loader-bar { width: 200px; height: 2px; background: rgba(0,255,149,0.2); margin-top: 10px; position: relative; }
         #boot-progress { height: 100%; background: #00ff95; width: 0%; box-shadow: 0 0 10px #00ff95; }
 
-        /* --- ANIMAÇÕES DE ENTRADA --- */
-        .fade-in-element { opacity: 0; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
-        .fade-in-visible { opacity: 1; transform: translateY(0); }
-
-        /* --- FILTRO VHS INTENSO --- */
+        /* --- FILTRO VHS --- */
         body::before {
             content: " "; display: block; position: fixed;
             top: 0; left: 0; bottom: 0; right: 0;
@@ -55,143 +76,96 @@
             pointer-events: none;
             animation: vhs-flicker 0.1s infinite;
         }
-
-        @keyframes vhs-flicker {
-            0% { opacity: 0.98; }
-            50% { opacity: 1; }
-            100% { opacity: 0.99; }
-        }
+        @keyframes vhs-flicker { 0% { opacity: 0.98; } 50% { opacity: 1; } 100% { opacity: 0.99; } }
 
         /* --- PROTOCOLO ROXO (ATIVADO NO CLIQUE 15) --- */
         .purple-protocol #boot-screen { color: #a020f0; text-shadow: 0 0 5px #a020f0; }
         .purple-protocol #boot-progress { background: #a020f0; box-shadow: 0 0 10px #a020f0; }
-        .purple-protocol #title-liam, .purple-protocol #clock, .purple-protocol #fps-counter { color: #a020f0 !important; text-shadow: 0 0 10px #a020f0; }
-        .purple-protocol .nav-item.active { color: #a020f0 !important; border-left: 2px solid #a020f0 !important; background: rgba(160, 32, 240, 0.1); }
-        .purple-protocol #shop-btn { color: #a020f0 !important; } /* Shop Now vira Roxo */
-        .purple-protocol header { border-bottom: 1px solid rgba(160, 32, 240, 0.4); }
-        .purple-protocol body::before { 
-            background-size: 100% 2px, 3px 100%, 100% 100%; 
-            opacity: 1.2; 
-            filter: hue-rotate(280deg) contrast(1.5); 
+        
+        .purple-protocol #title-liam, 
+        .purple-protocol #shop-btn,
+        .purple-protocol #clock, 
+        .purple-protocol #fps-counter { 
+            color: #a020f0 !important; 
+            text-shadow: 0 0 5px #a020f0; 
         }
+
+        .purple-protocol #title-liam:hover, 
+        .purple-protocol #shop-btn:hover {
+            color: #fff !important;
+            text-shadow: 0 0 10px #a020f0, 0 0 25px #a020f0, 0 0 45px #a020f0 !important;
+        }
+
+        .purple-protocol .nav-item.active { color: #a020f0 !important; border-left: 2px solid #a020f0 !important; background: rgba(160, 32, 240, 0.1); }
+        .purple-protocol header { border-bottom: 1px solid rgba(160, 32, 240, 0.4); }
+        .purple-protocol body::before { filter: hue-rotate(280deg) contrast(1.5); }
         .purple-protocol .audio-visualizer { border: 1px solid rgba(160, 32, 240, 0.5); }
 
-        /* --- BREAKING NEWS TICKER --- */
-        .news-ticker {
-            position: fixed; top: 0; left: 0; width: 100%;
-            background: #b20000; color: #fff; font-family: sans-serif;
-            font-size: 11px; font-weight: bold; padding: 6px 0; z-index: 1000;
-            border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap;
-            opacity: 0; transition: opacity 2s ease;
-        }
-        .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
-        @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        /* --- EFEITO DE TREMIDA (SHAKE) --- */
-        .glitch-shake {
-            animation: shake 0.15s cubic-bezier(.36,.07,.19,.97) both infinite;
-            filter: sepia(1) saturate(3) hue-rotate(-50deg) brightness(1.2) !important;
-            background: #1a0000 !important;
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 1px, 0); }
-            20%, 80% { transform: translate3d(2px, -1px, 0); }
-            30%, 50%, 70% { transform: translate3d(-3px, 2px, 0); }
-            40%, 60% { transform: translate3d(3px, -2px, 0); }
-        }
-
-        /* --- ALERTA PISCANTE --- */
-        .blink-alert {
-            animation: blinkRed 0.2s infinite;
-            font-weight: bold;
-            letter-spacing: 2px;
-        }
-        @keyframes blinkRed {
-            0% { color: #ff0000; }
-            50% { color: #ffffff; }
-            100% { color: #ff0000; }
-        }
-
+        /* --- ESTRUTURA GERAL --- */
         * { box-sizing: border-box; }
         body {
             margin: 0; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif;
-            background: #001f3d;
-            color: #e0e0e0; display: flex; justify-content: center; 
-            height: 100vh; overflow: hidden; transition: background 0.3s;
-            perspective: 1000px;
+            background: #001f3d; color: #e0e0e0; display: flex; justify-content: center; 
+            height: 100vh; overflow: hidden; transition: background 0.3s; perspective: 1000px;
         }
 
         .main-archive {
             width: 100%; max-width: 900px; height: 82vh; background: rgba(0, 0, 0, 0.95);
             backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);
             display: flex; flex-direction: column; position: relative; overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,1);
-            transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg);
-            border-radius: 10px;
-            opacity: 0; transition: opacity 2s ease;
+            box-shadow: 0 0 50px rgba(0,0,0,1); transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg);
+            border-radius: 10px; opacity: 0; transition: opacity 2s ease;
         }
 
-        header {
-            padding: 20px; border-bottom: 1px solid rgba(0, 255, 149, 0.3);
-            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
-        }
-
-        #title-liam { cursor: pointer; user-select: none; }
-        .system-info { text-align: right; }
+        header { padding: 20px; border-bottom: 1px solid rgba(0, 255, 149, 0.3); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        #title-liam { cursor: pointer; user-select: none; margin: 0; font-size: 22px; }
         #clock { font-family: monospace; font-size: 14px; color: #00ff95; text-shadow: 0 0 5px #00ff95; }
         #fps-counter { font-family: monospace; font-size: 10px; color: #00ff95; opacity: 0.7; }
 
         .archive-body { display: flex; flex: 1; overflow: hidden; }
         nav { width: 180px; background: rgba(0, 0, 0, 0.5); border-right: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
-
-        .nav-item {
-            display: block; padding: 15px; color: #aaa; text-decoration: none;
-            font-size: 14px; cursor: pointer; border-left: 2px solid transparent;
-        }
+        .nav-item { display: block; padding: 15px; color: #aaa; text-decoration: none; font-size: 14px; cursor: pointer; border-left: 2px solid transparent; }
         .nav-item.active { color: #00ff95; border-left: 2px solid #00ff95; background: rgba(0, 255, 149, 0.1); }
-        #visual-tab { display: none; } 
+        .fade-in-element { opacity: 0; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
+        .fade-in-visible { opacity: 1; transform: translateY(0); }
+        #visual-tab { display: none; }
 
-        main { 
-            flex: 1; 
-            padding: 25px; 
-            position: relative; 
-            overflow-y: auto;
-            max-height: calc(82vh - 80px);
-        }
-
+        main { flex: 1; padding: 25px; position: relative; overflow-y: auto; max-height: calc(82vh - 80px); }
         .file-entry { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
-        
-        .audio-visualizer {
-            width: 100%;
-            height: 180px;
-            background: #000;
-            margin-bottom: 10px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 255, 149, 0.2);
-            display: none; 
-        }
-        .audio-visualizer video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: grayscale(1) contrast(1.2) brightness(0.7);
-            pointer-events: none;
-        }
-
+        .audio-visualizer { width: 100%; height: 180px; background: #000; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(0, 255, 149, 0.2); display: none; }
+        .audio-visualizer video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2) brightness(0.7); pointer-events: none; }
         audio, video { width: 100%; margin-top: 10px; filter: grayscale(1) contrast(1.4) brightness(0.8); }
         audio { height: 30px; filter: invert(1) hue-rotate(90deg) opacity(0.6); }
 
-        #loader {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center;
-            font-family: monospace; flex-direction: column; text-align: center;
-        }
-
+        #loader { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center; font-family: monospace; flex-direction: column; text-align: center; }
         .blink-underline::after { content: "_"; animation: blink 0.8s step-end infinite; }
         @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
 
-        @media (max-width: 768px) { .archive-body { flex-direction: column; } nav { width: 100%; display: flex; overflow-x: auto; } body { overflow: auto; } .main-archive { height: auto; transform: none; } }
+        .news-ticker { position: fixed; top: 0; left: 0; width: 100%; background: #b20000; color: #fff; font-size: 11px; padding: 6px 0; z-index: 1000; border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap; opacity: 0; transition: opacity 2s ease; }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
+        @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* --- GLITCH SUAVE E TELA PISCANDO (ATUALIZADO) --- */
+        .glitch-shake { 
+            animation: intenseShake 0.1s infinite !important; 
+            filter: sepia(1) saturate(4) hue-rotate(-50deg) contrast(1.5) !important; 
+        }
+        @keyframes intenseShake { 
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            /* Tremida centralizada (valores pequenos) e piscada mantida */
+            10% { transform: translate3d(-2px, -1px, 0); background-color: #ff0000 !important; }
+            20% { transform: translate3d(2px, 1px, 0); background-color: #000000 !important; }
+            30% { transform: translate3d(-1px, 2px, 0); }
+            40% { transform: translate3d(2px, -1px, 0); background-color: #ffffff !important; color: #000; }
+            50% { transform: translate3d(-3px, 1px, 0); }
+            60% { transform: translate3d(3px, -1px, 0); background-color: #ff0000 !important; }
+            70% { transform: translate3d(-1px, 3px, 0); }
+            80% { transform: translate3d(1px, -3px, 0); background-color: #ffffff !important; }
+            90% { transform: translate3d(-2px, -1px, 0); }
+        }
+
+        .blink-alert { animation: blinkRed 0.2s infinite; font-weight: bold; letter-spacing: 2px; }
+        @keyframes blinkRed { 0% { color: #ff0000; } 50% { color: #ffffff; } 100% { color: #ff0000; } }
     </style>
 </head>
 <body id="main-body" oncontextmenu="return false;">
@@ -203,16 +177,14 @@
 </div>
 
 <div class="news-ticker" id="ticker-news">
-    <div class="ticker-text">
-        ::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::
-    </div>
+    <div class="ticker-text">::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::</div>
 </div>
 
 <div class="main-archive" id="archive-container">
     <header>
         <div>
             <div style="font-size: 9px; opacity: 0.5;">ROOT:/LIAM/ARCHIVE/</div>
-            <h1 id="title-liam" style="margin:0; font-size:22px; color:#00ff95;" onclick="liamViolation()">LIAM FENTI</h1>
+            <h1 id="title-liam" onclick="liamViolation()">LIAM FENTI</h1>
         </div>
         <div class="system-info">
             <div id="clock">00:00:00</div>
@@ -226,9 +198,8 @@
             <div id="visual-tab" class="nav-item fade-in-element" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
             <div class="nav-item fade-in-element" onclick="tabAction(this, 'feed')">FEED.TXT</div>
             <div id="id-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
-            <a id="shop-btn" href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element" style="color:#00ff95">SHOP_NOW.EXE</a>
+            <a id="shop-btn" href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element">SHOP_NOW.EXE</a>
         </nav>
-
         <main id="viewport-scroll">
             <div id="loader" class="blink-underline"><span id="loader-msg"></span></div>
             <div id="viewport"></div>
@@ -237,336 +208,162 @@
 </div>
 
 <script>
-    let clicks = 0;
-    let locked = false;
-
-    document.addEventListener('contextmenu', event => event.preventDefault());
+    let clicks = 0; let locked = false;
+    document.addEventListener('contextmenu', e => e.preventDefault());
 
     function runBoot() {
-        const perc = document.getElementById('boot-perc');
-        const bar = document.getElementById('boot-progress');
-        const screen = document.getElementById('boot-screen');
-        const archive = document.getElementById('archive-container');
-        const ticker = document.getElementById('ticker-news');
-        const navItems = document.querySelectorAll('.fade-in-element');
-        
+        const perc = document.getElementById('boot-perc'), bar = document.getElementById('boot-progress'), screen = document.getElementById('boot-screen'), archive = document.getElementById('archive-container'), ticker = document.getElementById('ticker-news'), navItems = document.querySelectorAll('.fade-in-element');
         let progress = 0;
-        
         const update = () => {
-            let increment = Math.random() * 1.5;
-            if (progress > 20 && progress < 25) increment = 0.1; 
-            if (progress > 60 && progress < 68) increment = 0.05;
-            if (progress > 85 && progress < 92) increment = 0.2;
-
-            progress += increment;
+            progress += 0.8; 
             if (progress > 100) progress = 100;
-            
             perc.innerText = `${Math.floor(progress)}%`;
             bar.style.width = `${progress}%`;
-
-            if (progress < 100) {
-                setTimeout(update, 100);
-            } else {
+            if (progress < 100) setTimeout(update, 80);
+            else {
                 setTimeout(() => {
-                    screen.style.transition = "opacity 1s";
-                    screen.style.opacity = "0";
+                    screen.style.transition = "opacity 1s"; screen.style.opacity = "0";
                     setTimeout(() => {
-                        screen.style.display = "none";
-                        archive.style.opacity = "1";
-                        ticker.style.opacity = "1";
-                        
-                        navItems.forEach((item, index) => {
-                            setTimeout(() => {
-                                item.classList.add('fade-in-visible');
-                            }, (index + 1) * 400);
-                        });
-
+                        screen.style.display = "none"; archive.style.opacity = "1"; ticker.style.opacity = "1";
+                        navItems.forEach((item, i) => setTimeout(() => item.classList.add('fade-in-visible'), (i+1)*400));
                         tabAction(document.getElementById('audio-btn'), 'audio');
                     }, 1000);
                 }, 800);
             }
-        };
-        update();
+        }; update();
     }
 
     function startSystemInfo() {
-        const updateClock = () => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
-        };
-        setInterval(updateClock, 1000); updateClock();
-
-        const fps = document.getElementById('fps-counter');
-        const updateFps = () => {
-            const val = (Math.random() * (60 - 28) + 28).toFixed(1);
-            fps.innerText = `FPS: ${val}`;
-            setTimeout(updateFps, Math.random() * (800 - 300) + 300);
-        };
+        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'), 1000);
+        const updateFps = () => { document.getElementById('fps-counter').innerText = `FPS: ${(Math.random()*(60-28)+28).toFixed(1)}`; setTimeout(updateFps, 500); };
         updateFps();
     }
 
     function triggerGlitch() {
         if(locked) return;
-        const b = document.getElementById('main-body');
-        const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
         setTimeout(() => {
-            b.classList.add('glitch-shake');
-            setTimeout(() => {
-                b.classList.remove('glitch-shake');
-                triggerGlitch();
-            }, 500);
-        }, delay);
+            document.getElementById('main-body').classList.add('glitch-shake');
+            setTimeout(() => { document.getElementById('main-body').classList.remove('glitch-shake'); triggerGlitch(); }, 500);
+        }, 15000 + Math.random()*10000);
     }
 
     function liamViolation() {
-        if (locked) return;
+        if (locked) return; 
         clicks++;
-        const b = document.getElementById('main-body');
-        const l = document.getElementById('loader');
-        const m = document.getElementById('loader-msg');
-        const vTab = document.getElementById('visual-tab');
+        const b = document.getElementById('main-body'), l = document.getElementById('loader'), m = document.getElementById('loader-msg'), vTab = document.getElementById('visual-tab');
         
-        b.classList.add('glitch-shake');
+        b.classList.add('glitch-shake'); 
         locked = true;
-
-        if (clicks === 1) {
-            l.style.display = 'flex';
-            m.classList.add('blink-alert');
-            m.innerText = "DON'T DO THAT AGAIN.";
-            setTimeout(() => { reboot(); }, 3000);
-        } else if (clicks === 5) {
-            l.style.display = 'flex';
-            m.classList.add('blink-alert');
-            m.innerText = "WHY ARE YOU DOING THIS?";
-            setTimeout(() => { reboot(); }, 5000);
-        } else if (clicks === 10) {
-            l.style.display = 'flex';
-            m.classList.add('blink-alert');
-            m.innerText = "STOP BEING CURIOUS - LOCKDOWN PROTOCOL ACTIVATED";
-            setTimeout(() => { reboot(); }, 6000);
-        } else if (clicks === 15) {
-            l.style.display = 'flex';
-            m.classList.add('blink-alert');
-            m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK.";
-            
+        
+        if (clicks === 1) { 
+            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "DON'T DO THAT AGAIN."; 
+            setTimeout(reboot, 3000); 
+        } else if (clicks === 5) { 
+            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "WHY ARE YOU DOING THIS?"; 
+            setTimeout(reboot, 5000); 
+        } else if (clicks === 10) { 
+            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "STOP BEING CURIOUS - LOCKDOWN PROTOCOL ACTIVATED"; 
+            setTimeout(reboot, 6000); 
+        } else if (clicks === 15) { 
+            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK.";
             document.documentElement.classList.add('purple-protocol');
-            
-            vTab.style.display = 'block';
-            vTab.classList.add('fade-in-visible');
-            setTimeout(() => { reboot(); }, 5000);
-        } else {
-            l.style.display = 'flex';
-            m.classList.add('blink-alert');
-            m.innerText = "!!!!!!!!!!";
-            setTimeout(() => { quickReset(); }, 700);
+            vTab.style.display = 'block'; vTab.classList.add('fade-in-visible');
+            setTimeout(reboot, 5000); 
+        } else { 
+            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "!!!!!!!!!!"; 
+            setTimeout(quickReset, 700); 
         }
     }
 
-    function quickReset() {
-        const b = document.getElementById('main-body');
-        const l = document.getElementById('loader');
-        const m = document.getElementById('loader-msg');
-        b.classList.remove('glitch-shake');
-        m.classList.remove('blink-alert');
-        l.style.display = 'none';
-        locked = false;
-    }
+    function quickReset() { document.getElementById('main-body').classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader').style.display = 'none'; locked = false; }
+    function reboot() { document.getElementById('main-body').classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader-msg').innerText = "REBOOTING..."; setTimeout(() => { document.getElementById('loader').style.display = 'none'; locked = false; tabAction(document.getElementById('audio-btn'), 'audio'); }, 2000); }
 
-    function reboot() {
-        const b = document.getElementById('main-body');
-        const m = document.getElementById('loader-msg');
-        b.classList.remove('glitch-shake');
-        m.classList.remove('blink-alert');
-        m.style.color = document.documentElement.classList.contains('purple-protocol') ? "#a020f0" : "#00ff95";
-        m.innerText = "REBOOTING SYSTEM...";
-        setTimeout(() => {
-            document.getElementById('loader').style.display = 'none';
-            locked = false;
-            tabAction(document.getElementById('audio-btn'), 'audio');
-        }, 2000);
+    function syncVideo(audioId, vizId, vidId) {
+        const audio = document.getElementById(audioId), viz = document.getElementById(vizId), video = document.getElementById(vidId);
+        if(!audio || !viz || !video) return;
+        audio.onplay = () => { viz.style.display = 'block'; video.play(); };
+        audio.onpause = () => { video.pause(); viz.style.display = 'none'; };
+        audio.onended = () => { video.pause(); viz.style.display = 'none'; };
     }
 
     function tabAction(el, type) {
         if (locked) return;
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         if(el) el.classList.add('active');
-
-        const loader = document.getElementById('loader');
-        const msg = document.getElementById('loader-msg');
-        const v = document.getElementById('viewport');
-
-        msg.style.color = document.documentElement.classList.contains('purple-protocol') ? "#a020f0" : "#00ff95";
-        msg.innerText = "EXTRACTING_DATA...";
-        loader.style.display = 'flex';
-        v.style.opacity = '0';
-
-        setTimeout(() => {
-            loader.style.display = 'none';
-            v.style.opacity = '1';
-            render(type);
-        }, 2000);
-    }
-
-    function syncVideo(audioId, vizId, vidId) {
-        const audio = document.getElementById(audioId);
-        const vizContainer = document.getElementById(vizId);
-        const video = document.getElementById(vidId);
-        
-        if(!audio || !vizContainer || !video) return;
-
-        audio.onplay = () => { 
-            vizContainer.style.display = 'block'; 
-            video.play(); 
-        };
-        audio.onpause = () => { 
-            video.pause(); 
-            vizContainer.style.display = 'none'; 
-        };
-        audio.onended = () => { 
-            video.pause(); 
-            vizContainer.style.display = 'none'; 
-        };
+        const l = document.getElementById('loader'), v = document.getElementById('viewport');
+        l.style.display = 'flex'; document.getElementById('loader-msg').innerText = "LOADING..."; v.style.opacity = '0';
+        setTimeout(() => { l.style.display = 'none'; v.style.opacity = '1'; render(type); }, 1500);
     }
 
     function render(type) {
         const v = document.getElementById('viewport');
         const scrollArea = document.getElementById('viewport-scroll');
-        
         if (type === 'audio') {
-            v.innerHTML = `<h2>AUDIO.DAT</h2>
-            <div class="file-entry">
-                <div id="viz1" class="audio-visualizer">
-                    <video id="vid1" loop muted playsinline>
-                        <source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4">
-                    </video>
+            v.innerHTML = `
+                <h2>AUDIO.DAT</h2>
+                <div class="file-entry">
+                    <div id="viz1" class="audio-visualizer">
+                        <video id="vid1" loop muted playsinline>
+                            <source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4">
+                        </video>
+                    </div>
+                    <strong>CHANNEL_GIRL.wav</strong>
+                    <audio id="audio1" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/5f3vsxntr1twkehvkjaij/LIAM-LSZ-CHANNEL_GIRL.wav?rlkey=tbgv2y9xf5jvm3ent21le5sco&st=v5m2kf2x&raw=1"></audio>
                 </div>
-                <strong>LIAM - LSZ - CHANNEL_GIRL.wav</strong>
-                <audio id="audio1" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/5f3vsxntr1twkehvkjaij/LIAM-LSZ-CHANNEL_GIRL.wav?rlkey=tbgv2y9xf5jvm3ent21le5sco&st=v5m2kf2x&raw=1"></audio>
-            </div>
-            <div class="file-entry">
-                <div id="viz2" class="audio-visualizer">
-                    <video id="vid2" loop muted playsinline>
-                        <source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4">
-                    </video>
-                </div>
-                <strong>LIAM - LSZ - UM_POUCO_MAIS.wav</strong>
-                <audio id="audio2" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/xn9koxjafrfdfq4kt2lrc/LIAM-LSZ-UM_POUCO_MAIS.wav?rlkey=8agl1nov89u7dqk925n7sn15d&st=r6os7ph1&raw=1"></audio>
-            </div>`;
+                <div class="file-entry">
+                    <div id="viz2" class="audio-visualizer">
+                        <video id="vid2" loop muted playsinline>
+                            <source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4">
+                        </video>
+                    </div>
+                    <strong>UM_POUCO_MAIS.wav</strong>
+                    <audio id="audio2" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/xn9koxjafrfdfq4kt2lrc/LIAM-LSZ-UM_POUCO_MAIS.wav?rlkey=8agl1nov89u7dqk925n7sn15d&st=r6os7ph1&raw=1"></audio>
+                </div>`;
             syncVideo('audio1', 'viz1', 'vid1');
             syncVideo('audio2', 'viz2', 'vid2');
-
+        } else if (type === 'visual') {
+            v.innerHTML = `<h2>VISUAL.LOG</h2><div class="file-entry"><strong>FILE: UNKNOWN_RECOVERY.mov</strong><video controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video></div>`;
+        } else if (type === 'feed') {
+            v.innerHTML = `<h2>FEED.TXT</h2><div id="feed-logs"></div>`;
+            const logs = ["[SYS] Connection established.", "[SYS] Analyzing intruder behavior...", "[WARN] Your session is being recorded.", "[!] URGENT: UNAUTHORIZED ACCESS DETECTED.", `[SEC] Trace complete. Device: ${navigator.platform}`, "[MSG] This site has been hacked. Files are corrupted.", "[MSG] Intruder detected in IDENTITY.INF sector.", "[MSG] We must take action against the intruder before the system crashes.", "[SYS] Firewall status: COMPROMISED.", "[SYS] Attempting to isolate data packets...", "[MSG] So... it's you again.", "[SYS] LOG_END."];
+            logs.forEach((log, i) => { 
+                setTimeout(() => { 
+                    const logsDiv = document.getElementById('feed-logs'); 
+                    if(logsDiv){ 
+                        const line = document.createElement('p'); 
+                        line.style.margin = "5px 0"; 
+                        line.innerHTML = `<span style="color:${document.documentElement.classList.contains('purple-protocol') ? '#a020f0' : '#00ff95'}">></span> ${log}`; 
+                        logsDiv.appendChild(line); 
+                        scrollArea.scrollTop = scrollArea.scrollHeight; 
+                    } 
+                }, (i + 1) * 3500); 
+            });
         } else if (type === 'identity') {
             v.innerHTML = `<h2>IDENTITY.INF</h2><div id="tw" style="font-size:1.1rem; line-height:1.6; min-height:300px; text-align:justify;"></div>`;
             typeWriterIdentity();
-        } else if (type === 'feed') {
-            v.innerHTML = `<h2>FEED.TXT</h2><div id="feed-logs"></div>`;
-            const userOS = navigator.platform;
-            const logs = [
-                "[SYS] Connection established.",
-                "[SYS] Analyzing intruder behavior...",
-                "[WARN] Your session is being recorded.",
-                "[!] URGENT: UNAUTHORIZED ACCESS DETECTED.",
-                `[SEC] Trace complete. Device: ${userOS}`,
-                "[MSG] This site has been hacked. Files are corrupted.",
-                "[MSG] Intruder detected in IDENTITY.INF sector.",
-                "[MSG] We must take action against the intruder before the system crashes.",
-                "[SYS] Firewall status: COMPROMISED.",
-                "[SYS] Attempting to isolate data packets...",
-                "[MSG] So... it's you again.",
-                "[SYS] LOG_END."
-            ];
-            logs.forEach((log, i) => {
-                setTimeout(() => {
-                    const logsDiv = document.getElementById('feed-logs');
-                    if(logsDiv){
-                        const line = document.createElement('p');
-                        line.style.margin = "5px 0";
-                        line.innerHTML = `<span style="color:${document.documentElement.classList.contains('purple-protocol') ? '#a020f0' : '#00ff95'}">></span> ${log}`;
-                        logsDiv.appendChild(line);
-                        scrollArea.scrollTop = scrollArea.scrollHeight;
-                    }
-                }, (i + 1) * 3500);
-            });
-        } else if (type === 'visual') {
-            v.innerHTML = `<h2>VISUAL.LOG</h2>
-            <div class="file-entry">
-                <strong>FILE: UNKNOWN_RECOVERY.mov</strong>
-                <video controls controlsList="nodownload noplaybackrate" preload="metadata" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video>
-            </div>`;
         }
     }
 
     function typeWriterIdentity() {
-        const el = document.getElementById('tw');
-        if(!el) return;
-        
-        const sequence = [
-            { t: "I am just an ordinary ", e: false },
-            { t: "painter", e: true, c: "producer" }, 
-            { t: "—or so they say. I see the world exactly as it was presented to me: a sequence of ", e: false },
-            { t: "colors", e: true, c: "frequencies" }, 
-            { t: " that have lost their luster. To me, the world lost its color a long time ago, leaving behind only the gray of static and the green of terminal code.\n\nThis site is not a ", e: false },
-            { t: "business", e: true, c: "sanctuary" }, 
-            { t: ". It was built for the ", e: false },
-            { t: "normal", e: true, c: "misfits" }, 
-            { t: ". It’s a place for the ", e: false },
-            { t: "engineers", e: true, c: "creatives" }, 
-            { t: " who find beauty in the ", e: false },
-            { t: "perfection", e: true, c: "glitch" }, 
-            { t: ", in the noise, and in what others call distortion.\n\nIf you feel like a stranger in your own reality, you have found the right archive.", e: false }
-        ];
-
-        let step = 0;
-        let charIdx = 0;
-        let isDeleting = false;
-
+        const el = document.getElementById('tw'); if(!el) return;
+        const sequence = [{ t: "I am just an ordinary ", e: false }, { t: "painter", e: true, c: "producer" }, { t: "—or so they say. I see the world exactly as it was presented to me: a sequence of ", e: false }, { t: "colors", e: true, c: "frequencies" }, { t: " that have lost their luster. To me, the world lost its color a long time ago, leaving behind only the gray of static and the green of terminal code.\n\nThis site is not a ", e: false }, { t: "business", e: true, c: "sanctuary" }, { t: ". It’s a place for the ", e: false }, { t: "normal", e: true, c: "misfits" }, { t: ". It’s a place for the ", e: false }, { t: "engineers", e: true, c: "creatives" }, { t: " who find beauty in the ", e: false }, { t: "perfection", e: true, c: "glitch" }, { t: ", in the noise, and in what others call distortion.\n\nIf you feel like a stranger in your own reality, you have found the right archive.", e: false }];
+        let step = 0, charIdx = 0, isDeleting = false;
         function type() {
-            const current = sequence[step];
-            if (!current) {
-                el.innerHTML += '<span class="blink-underline"></span>';
-                return;
-            }
-
+            const current = sequence[step]; if (!current) { el.innerHTML += '<span class="blink-underline"></span>'; return; }
             const fullText = current.t;
-
             if (!isDeleting) {
-                if (charIdx < fullText.length) {
-                    const char = fullText.charAt(charIdx);
-                    el.innerHTML += char === '\n' ? '<br>' : char;
-                    charIdx++;
-                    setTimeout(type, Math.random() * (70 - 40) + 40);
-                } else if (current.e) {
-                    setTimeout(() => { isDeleting = true; type(); }, 700);
-                } else {
-                    step++;
-                    charIdx = 0;
-                    setTimeout(type, 150);
-                }
+                if (charIdx < fullText.length) { const char = fullText.charAt(charIdx); el.innerHTML += char === '\n' ? '<br>' : char; charIdx++; setTimeout(type, 50); } 
+                else if (current.e) { setTimeout(() => { isDeleting = true; type(); }, 700); } 
+                else { step++; charIdx = 0; setTimeout(type, 150); }
             } else {
-                if (charIdx > 0) {
-                    const currentContent = el.innerHTML;
-                    if (currentContent.endsWith('<br>')) {
-                        el.innerHTML = currentContent.slice(0, -4);
-                    } else {
-                        el.innerHTML = currentContent.slice(0, -1);
-                    }
-                    charIdx--;
-                    setTimeout(type, 80);
-                } else {
-                    isDeleting = false;
-                    sequence[step] = { t: current.c, e: false };
-                    setTimeout(type, 300);
-                }
+                if (charIdx > 0) { el.innerHTML = el.innerHTML.endsWith('<br>') ? el.innerHTML.slice(0, -4) : el.innerHTML.slice(0, -1); charIdx--; setTimeout(type, 80); } 
+                else { isDeleting = false; sequence[step] = { t: current.c, e: false }; setTimeout(type, 300); }
             }
         }
         type();
     }
 
-    window.onload = () => {
-        startSystemInfo();
-        triggerGlitch();
-        runBoot();
-    };
+    window.onload = () => { startSystemInfo(); triggerGlitch(); runBoot(); };
 </script>
 </body>
 </html>
