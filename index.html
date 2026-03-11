@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LIAM FENTI | ARCHIVE_V15_STABLE</title>
+  <title>LIAM FENTI | ARCHIVE_V15_STABLE</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2300ff95'/><text y='80' x='15' font-family='monospace' font-size='90' font-weight='bold' fill='%23000'>_</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap');
+
+        /* --- CURSOR CUSTOMIZADO (NOVO) --- */
+        html, body, .nav-item, #title-liam, #shop-btn, a {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%2300ff95"/><rect x="0" y="9" width="20" height="2" fill="%2300ff95"/></svg>') 10 10, crosshair !important;
+        }
 
         /* --- DESATIVAR DOWNLOADS & VELOCIDADE --- */
         video, audio { -webkit-user-select: none; user-select: none; }
@@ -78,82 +85,108 @@
         }
         @keyframes vhs-flicker { 0% { opacity: 0.98; } 50% { opacity: 1; } 100% { opacity: 0.99; } }
 
+        /* --- MONITORES DE VÍDEO FLUTUANTES --- */
+        .floating-monitor {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(0, 255, 149, 0.3);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            z-index: 5; 
+            border-radius: 4px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: auto; 
+        }
+        .monitor-header {
+            background: rgba(0, 255, 149, 0.1);
+            color: #00ff95;
+            font-family: monospace;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-bottom: 1px solid rgba(0, 255, 149, 0.3);
+            text-align: center;
+            letter-spacing: 1px;
+            cursor: grab; 
+            user-select: none;
+        }
+        .monitor-header:active { cursor: grabbing; }
+        .floating-monitor video {
+            width: 100%;
+            display: block;
+            filter: grayscale(1) contrast(1.4) brightness(0.8);
+            pointer-events: none; 
+        }
+
+        /* --- TERMINAL SECRETO (NOVO) --- */
+        .secret-terminal {
+            margin-top: auto;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff95;
+            border-top: 1px solid rgba(0, 255, 149, 0.3);
+            display: flex;
+            align-items: center;
+        }
+        .secret-terminal input {
+            background: transparent; border: none; color: inherit;
+            font-family: inherit; width: 100%; outline: none; font-size: 14px; margin-left: 5px;
+        }
+        .secret-terminal input::placeholder { color: rgba(0, 255, 149, 0.4); }
+
         /* --- PROTOCOLO ROXO (ATIVADO NO CLIQUE 15) --- */
         .purple-protocol #boot-screen { color: #a020f0; text-shadow: 0 0 5px #a020f0; }
         .purple-protocol #boot-progress { background: #a020f0; box-shadow: 0 0 10px #a020f0; }
         
-        .purple-protocol #title-liam, 
-        .purple-protocol #shop-btn,
-        .purple-protocol #clock, 
-        .purple-protocol #fps-counter { 
-            color: #a020f0 !important; 
-            text-shadow: 0 0 5px #a020f0; 
-        }
-
-        .purple-protocol #title-liam:hover, 
-        .purple-protocol #shop-btn:hover {
-            color: #fff !important;
-            text-shadow: 0 0 10px #a020f0, 0 0 25px #a020f0, 0 0 45px #a020f0 !important;
-        }
-
+        .purple-protocol #title-liam, .purple-protocol #shop-btn, .purple-protocol #clock, .purple-protocol #fps-counter { color: #a020f0 !important; text-shadow: 0 0 5px #a020f0; }
+        .purple-protocol #title-liam:hover, .purple-protocol #shop-btn:hover { color: #fff !important; text-shadow: 0 0 10px #a020f0, 0 0 25px #a020f0, 0 0 45px #a020f0 !important; }
         .purple-protocol .nav-item.active { color: #a020f0 !important; border-left: 2px solid #a020f0 !important; background: rgba(160, 32, 240, 0.1); }
         .purple-protocol header { border-bottom: 1px solid rgba(160, 32, 240, 0.4); }
         .purple-protocol body::before { filter: hue-rotate(280deg) contrast(1.5); }
         .purple-protocol .audio-visualizer { border: 1px solid rgba(160, 32, 240, 0.5); }
+        .purple-protocol .floating-monitor { border-color: rgba(160, 32, 240, 0.4); }
+        .purple-protocol .monitor-header { background: rgba(160, 32, 240, 0.1); color: #a020f0; border-color: rgba(160, 32, 240, 0.4); }
+        .purple-protocol .secret-terminal { color: #a020f0; border-top: 1px solid rgba(160, 32, 240, 0.4); }
+        .purple-protocol .secret-terminal input::placeholder { color: rgba(160, 32, 240, 0.4); }
+        
+        /* Cursor roxo */
+        html.purple-protocol, html.purple-protocol body, html.purple-protocol .nav-item, html.purple-protocol #title-liam, html.purple-protocol #shop-btn, html.purple-protocol a {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%23a020f0"/><rect x="0" y="9" width="20" height="2" fill="%23a020f0"/></svg>') 10 10, crosshair !important;
+        }
 
         /* --- ESTRUTURA GERAL --- */
         * { box-sizing: border-box; }
-        body {
-            margin: 0; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif;
-            background: #001f3d; color: #e0e0e0; display: flex; justify-content: center; 
-            height: 100vh; overflow: hidden; transition: background 0.3s; perspective: 1000px;
-        }
-
-        .main-archive {
-            width: 100%; max-width: 900px; height: 82vh; background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
-            box-shadow: 0 0 50px rgba(0,0,0,1); transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg);
-            border-radius: 10px; opacity: 0; transition: opacity 2s ease;
-        }
-
+        body { margin: 0; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif; background: #001f3d; color: #e0e0e0; display: flex; justify-content: center; height: 100vh; overflow: hidden; transition: background 0.3s; perspective: 1000px; }
+        .main-archive { width: 100%; max-width: 900px; height: 82vh; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,1); transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg); border-radius: 10px; opacity: 0; transition: opacity 2s ease; z-index: 10; }
         header { padding: 20px; border-bottom: 1px solid rgba(0, 255, 149, 0.3); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        #title-liam { cursor: pointer; user-select: none; margin: 0; font-size: 22px; }
+        #title-liam { user-select: none; margin: 0; font-size: 22px; }
         #clock { font-family: monospace; font-size: 14px; color: #00ff95; text-shadow: 0 0 5px #00ff95; }
         #fps-counter { font-family: monospace; font-size: 10px; color: #00ff95; opacity: 0.7; }
-
         .archive-body { display: flex; flex: 1; overflow: hidden; }
-        nav { width: 180px; background: rgba(0, 0, 0, 0.5); border-right: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
-        .nav-item { display: block; padding: 15px; color: #aaa; text-decoration: none; font-size: 14px; cursor: pointer; border-left: 2px solid transparent; }
+        
+        /* Flex column na nav para empurrar o terminal para baixo */
+        nav { width: 180px; background: rgba(0, 0, 0, 0.5); border-right: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; display: flex; flex-direction: column; }
+        
+        .nav-item { display: block; padding: 15px; color: #aaa; text-decoration: none; font-size: 14px; border-left: 2px solid transparent; }
         .nav-item.active { color: #00ff95; border-left: 2px solid #00ff95; background: rgba(0, 255, 149, 0.1); }
         .fade-in-element { opacity: 0; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
         .fade-in-visible { opacity: 1; transform: translateY(0); }
         #visual-tab { display: none; }
-
-        /* ADICIONADO: overflow-x: hidden para evitar scroll horizontal em ecrãs pequenos */
-        main { flex: 1; padding: 25px; position: relative; overflow-y: auto; overflow-x: hidden; max-height: calc(82vh - 80px); }
-        
-        /* ADICIONADO: Quebra de texto automática no título dos arquivos (overflow-wrap) */
-        .file-entry { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); overflow-wrap: break-word; word-break: break-word; max-width: 100%; }
-        
+        main { flex: 1; padding: 25px; position: relative; overflow-y: auto; max-height: calc(82vh - 80px); }
+        .file-entry { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .audio-visualizer { width: 100%; height: 180px; background: #000; margin-bottom: 10px; overflow: hidden; border: 1px solid rgba(0, 255, 149, 0.2); display: none; }
         .audio-visualizer video { width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.2) brightness(0.7); pointer-events: none; }
-        audio, video { width: 100%; max-width: 100%; margin-top: 10px; filter: grayscale(1) contrast(1.4) brightness(0.8); }
+        audio, video { width: 100%; margin-top: 10px; filter: grayscale(1) contrast(1.4) brightness(0.8); }
         audio { height: 30px; filter: invert(1) hue-rotate(90deg) opacity(0.6); }
-
         #loader { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center; font-family: monospace; flex-direction: column; text-align: center; }
         .blink-underline::after { content: "_"; animation: blink 0.8s step-end infinite; }
         @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
-
-        .news-ticker { position: fixed; top: 0; left: 0; width: 100%; background: #b20000; color: #fff; font-size: 11px; padding: 6px 0; z-index: 1000; border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap; opacity: 0; transition: opacity 2s ease; }
+        .news-ticker { position: fixed; top: 0; left: 0; width: 100%; background: #b20000; color: #fff; font-size: 14px; padding: 6px 0; z-index: 1000; border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap; opacity: 0; transition: opacity 2s ease; }
         .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
         @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
         /* --- GLITCH SUAVE E TELA PISCANDO --- */
-        .glitch-shake { 
-            animation: intenseShake 0.1s infinite !important; 
-            filter: sepia(1) saturate(4) hue-rotate(-50deg) contrast(1.5) !important; 
-        }
+        .glitch-shake { animation: intenseShake 0.1s infinite !important; filter: sepia(1) saturate(4) hue-rotate(-50deg) contrast(1.5) !important; }
         @keyframes intenseShake { 
             0%, 100% { transform: translate3d(0, 0, 0); }
             10% { transform: translate3d(-2px, -1px, 0); background-color: #ff0000 !important; }
@@ -169,6 +202,15 @@
 
         .blink-alert { animation: blinkRed 0.2s infinite; font-weight: bold; letter-spacing: 2px; }
         @keyframes blinkRed { 0% { color: #ff0000; } 50% { color: #ffffff; } 100% { color: #ff0000; } }
+
+        @media (max-width: 768px) { 
+            .archive-body { flex-direction: column; } 
+            nav { width: 100%; flex-direction: row; overflow-x: auto; } 
+            body { overflow: auto; } 
+            .main-archive { height: auto; transform: none; }
+            .secret-terminal { border-top: none; border-left: 1px solid rgba(0, 255, 149, 0.3); margin-top: 0; margin-left: auto; width: 150px; }
+            .purple-protocol .secret-terminal { border-top: none; border-left: 1px solid rgba(160, 32, 240, 0.4); }
+        }
     </style>
 </head>
 <body id="main-body" oncontextmenu="return false;">
@@ -180,8 +222,15 @@
 </div>
 
 <div class="news-ticker" id="ticker-news">
-    <div class="ticker-text">::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::</div>
+    <div class="ticker-text" id="main-ticker-text">::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::</div>
 </div>
+
+<div class="floating-monitor" id="sys-monitor-1"><div class="monitor-header">SYS.CAM_01</div><video muted playsinline></video></div>
+<div class="floating-monitor" id="sys-monitor-2"><div class="monitor-header">SYS.CAM_02</div><video muted playsinline></video></div>
+<div class="floating-monitor" id="sys-monitor-3"><div class="monitor-header">SYS.CAM_03</div><video muted playsinline></video></div>
+<div class="floating-monitor" id="sys-monitor-4"><div class="monitor-header">SYS.CAM_04</div><video muted playsinline></video></div>
+<div class="floating-monitor" id="sys-monitor-5"><div class="monitor-header">SYS.CAM_05</div><video muted playsinline></video></div>
+<div class="floating-monitor" id="sys-monitor-6"><div class="monitor-header">SYS.CAM_06</div><video muted playsinline></video></div>
 
 <div class="main-archive" id="archive-container">
     <header>
@@ -202,6 +251,10 @@
             <div class="nav-item fade-in-element" onclick="tabAction(this, 'feed')">FEED.TXT</div>
             <div id="id-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
             <a id="shop-btn" href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element">SHOP_NOW.EXE</a>
+            
+            <div class="secret-terminal fade-in-element">
+                <span>></span><input type="text" id="terminal-input" autocomplete="off" spellcheck="false" maxlength="15">
+            </div>
         </nav>
         <main id="viewport-scroll">
             <div id="loader" class="blink-underline"><span id="loader-msg"></span></div>
@@ -213,6 +266,175 @@
 <script>
     let clicks = 0; let locked = false;
     document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // --- GLITCH DA ABA DO NAVEGADOR (NOVO) ---
+    function startTitleGlitch() {
+        const originalTitle = "LIAM FENTI | ARCHIVE_V15_STABLE";
+        const glitches = ["L!4M F3NT1 | C0RRUPT3D", "01001100 01101001", "SYS_FAIL | V15", "L*** F**** | UNKNOWN"];
+        setInterval(() => {
+            if (Math.random() > 0.6) {
+                document.title = glitches[Math.floor(Math.random() * glitches.length)];
+                setTimeout(() => { document.title = originalTitle; }, Math.random() * 400 + 100);
+            }
+        }, 3500);
+    }
+
+    // --- TERMINAL SECRETO LOGIC ---
+    function initTerminal() {
+        const input = document.getElementById('terminal-input');
+        if(!input) return;
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const val = input.value.toUpperCase().trim();
+                input.value = '';
+                if (val === 'BEAUTHENTIC') {
+                    // Reação de sucesso do password
+                    const b = document.getElementById('main-body');
+                    b.classList.add('glitch-shake');
+                    setTimeout(() => b.classList.remove('glitch-shake'), 1500);
+                    document.getElementById('main-ticker-text').innerText = "::: BEAUTHENTIC PROTOCOL ACTIVATED ::: YOU ALREADY KNOW TOO MUCH ::: DATES WILL BE REVEALED ON MY INSTAGRAM ::: STAY TUNED, PROSPECT :::";
+                } else if (val !== '') {
+                    input.placeholder = "DENIED";
+                    setTimeout(() => input.placeholder = "", 2000);
+                }
+            }
+        });
+    }
+
+    // --- LOGICA DOS MONITORES FLUTUANTES APRIMORADA ---
+    const sideVideos = [
+        "https://www.dropbox.com/scl/fi/as6qstpnas95yhadj85k5/Pharrell_In_Studio_with_702_for_a_Star_song_PART_4.mp4?rlkey=2vbt6wqwzc0qg3c66faayxr0t&st=1ynduhac&raw=1",
+        "https://www.dropbox.com/scl/fi/8uiidtqfeg1r56ljogdmf/Pharrell_Williams_Launches_New_ICECREAM_Skate_Team_with_Unreleased_Beat.mp4?rlkey=dusegknrk8h9cviqfueutoweg&st=151bxwmb&raw=1",
+        "https://www.dropbox.com/scl/fi/nnzjssrdn8nexv4jp3ll4/T-Funk-Friends-SF-Spitfire-Wheels-360p-h264-youtube.mp4?rlkey=fjmcngfnouzsp1c7ahk3wfzd9&st=pjo11g9s&raw=1"
+    ];
+
+    function makeDraggable(monitor) {
+        const header = monitor.querySelector('.monitor-header');
+        let isDragging = false;
+        let startX, startY, initialLeft, initialTop;
+
+        const startDrag = (e) => {
+            isDragging = true;
+            const rect = monitor.getBoundingClientRect();
+            
+            clearTimeout(monitor.driftTimeout);
+            clearTimeout(monitor.fadeTimeout);
+            
+            monitor.style.transition = 'none';
+            monitor.style.transform = 'translate(0, 0)';
+            monitor.style.left = rect.left + 'px';
+            monitor.style.top = rect.top + 'px';
+            monitor.style.opacity = '0.95'; 
+
+            startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            initialLeft = rect.left;
+            initialTop = rect.top;
+        };
+
+        const moveDrag = (e) => {
+            if (!isDragging) return;
+            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            monitor.style.left = (initialLeft + dx) + 'px';
+            monitor.style.top = (initialTop + dy) + 'px';
+        };
+
+        const endDrag = () => {
+            if (isDragging) {
+                isDragging = false;
+                resumeDrift(monitor); 
+            }
+        };
+
+        header.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', moveDrag);
+        document.addEventListener('mouseup', endDrag);
+
+        header.addEventListener('touchstart', startDrag, {passive: true});
+        document.addEventListener('touchmove', moveDrag, {passive: true});
+        document.addEventListener('touchend', endDrag);
+    }
+
+    function initSideMonitors() {
+        const monitors = document.querySelectorAll('.floating-monitor');
+        monitors.forEach((monitor, index) => {
+            makeDraggable(monitor);
+            monitor.dataset.side = (index % 2 === 0) ? 'left' : 'right';
+            setTimeout(() => { startDrift(monitor); }, index * 1200); 
+        });
+    }
+
+    function startDrift(monitor) {
+        const vid = monitor.querySelector('video');
+        const size = Math.floor(Math.random() * 140) + 130; 
+        monitor.style.width = size + 'px';
+        
+        let maxW = window.innerWidth - size;
+        let startX;
+        
+        if (monitor.dataset.side === 'left') {
+            startX = Math.random() * (window.innerWidth * 0.25); 
+        } else {
+            startX = (window.innerWidth * 0.75) + Math.random() * (window.innerWidth * 0.25) - size; 
+        }
+        
+        startX = Math.max(0, Math.min(startX, maxW)); 
+        let startY = Math.random() * (window.innerHeight - size);
+        
+        let driftX = (Math.random() * 120 - 60); 
+        let driftY = (Math.random() * 120 - 60);
+
+        monitor.style.transition = 'none';
+        monitor.style.transform = `translate(0px, 0px)`;
+        monitor.style.left = startX + 'px';
+        monitor.style.top = startY + 'px';
+        monitor.style.opacity = '0';
+
+        vid.src = sideVideos[Math.floor(Math.random() * sideVideos.length)];
+        
+        vid.onloadedmetadata = () => {
+            if (vid.duration > 13) { vid.currentTime = Math.random() * (vid.duration - 13); }
+            vid.play().catch(e => {});
+
+            let duration = Math.floor(Math.random() * 5000) + 8000; 
+            
+            monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`;
+            void monitor.offsetWidth; 
+            
+            monitor.style.transform = `translate(${driftX}px, ${driftY}px)`;
+            monitor.style.opacity = '0.85'; 
+            
+            monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
+            vid.onloadedmetadata = null;
+            monitor.driftTimeout = setTimeout(() => { startDrift(monitor); }, duration + 400);
+        };
+
+        monitor.driftTimeout = setTimeout(() => {
+            if (monitor.style.opacity === '0') {
+                vid.onloadedmetadata = null;
+                startDrift(monitor);
+            }
+        }, 15000);
+    }
+
+    function resumeDrift(monitor) {
+        let driftX = (Math.random() * 80 - 40);
+        let driftY = (Math.random() * 80 - 40);
+        let duration = Math.floor(Math.random() * 4000) + 5000; 
+        
+        monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`;
+        void monitor.offsetWidth;
+        
+        monitor.style.transform = `translate(${driftX}px, ${driftY}px)`;
+        monitor.style.opacity = '0.85';
+        
+        monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
+        monitor.driftTimeout = setTimeout(() => { startDrift(monitor); }, duration + 400);
+    }
 
     function runBoot() {
         const perc = document.getElementById('boot-perc'), bar = document.getElementById('boot-progress'), screen = document.getElementById('boot-screen'), archive = document.getElementById('archive-container'), ticker = document.getElementById('ticker-news'), navItems = document.querySelectorAll('.fade-in-element');
@@ -230,6 +452,7 @@
                         screen.style.display = "none"; archive.style.opacity = "1"; ticker.style.opacity = "1";
                         navItems.forEach((item, i) => setTimeout(() => item.classList.add('fade-in-visible'), (i+1)*400));
                         tabAction(document.getElementById('audio-btn'), 'audio');
+                        initSideMonitors(); 
                     }, 1000);
                 }, 800);
             }
@@ -310,8 +533,8 @@
                             <source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4">
                         </video>
                     </div>
-                    <strong>CHANNEL_GIRL.wav</strong>
-                    <audio id="audio1" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/5f3vsxntr1twkehvkjaij/LIAM-LSZ-CHANNEL_GIRL.wav?rlkey=tbgv2y9xf5jvm3ent21le5sco&st=v5m2kf2x&raw=1"></audio>
+                    <strong>CONFUSAO_MENTAL!</strong>
+                    <audio id="audio1" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/433bxjfabb2ynd4bce3cv/liamfenti-new-era-confus-o_mental-133bpm.wav?rlkey=r7whqf7fr759tpolqy2tnag53&st=umito00q&raw=1"></audio>
                 </div>
                 <div class="file-entry">
                     <div id="viz2" class="audio-visualizer">
@@ -319,11 +542,21 @@
                             <source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4">
                         </video>
                     </div>
-                    <strong>UM_POUCO_MAIS.wav</strong>
-                    <audio id="audio2" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/xn9koxjafrfdfq4kt2lrc/LIAM-LSZ-UM_POUCO_MAIS.wav?rlkey=8agl1nov89u7dqk925n7sn15d&st=r6os7ph1&raw=1"></audio>
+                    <strong>PROSPECTO_RICOSEM_BREVE!</strong>
+                    <audio id="audio2" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/shz1dmdjxh0r1z405jimn/liamfenti-new-era-prospecto_ricos_embreve-133bpm.wav?rlkey=dce11zlowrpu6wazltb6x3i7i&st=1rjmbf7b&raw=1"></audio>
+                </div>
+                <div class="file-entry">
+                    <div id="viz3" class="audio-visualizer">
+                        <video id="vid3" loop muted playsinline>
+                            <source src="https://www.dropbox.com/scl/fi/z3l1l7l07mozaalh820e5/videoplayback.mp4?rlkey=iu6efot92aplohnjh69d2qm0l&st=8lmmv1yf&raw=1" type="video/mp4">
+                        </video>
+                    </div>
+                    <strong>INTROSPECTIVO_EU_ERA!</strong>
+                    <audio id="audio3" controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/wvfictlepx4gzr9z4oohb/liamfenti-new-era-introspectivo_euera-138bpm.wav?rlkey=n7jat9tivwzea3c4079x8rau0&st=au1wi86l&raw=1"></audio>
                 </div>`;
             syncVideo('audio1', 'viz1', 'vid1');
             syncVideo('audio2', 'viz2', 'vid2');
+            syncVideo('audio3', 'viz3', 'vid3');
         } else if (type === 'visual') {
             v.innerHTML = `<h2>VISUAL.LOG</h2><div class="file-entry"><strong>FILE: UNKNOWN_RECOVERY.mov</strong><video controls controlsList="nodownload noplaybackrate" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video></div>`;
         } else if (type === 'feed') {
@@ -366,7 +599,13 @@
         type();
     }
 
-    window.onload = () => { startSystemInfo(); triggerGlitch(); runBoot(); };
+    window.onload = () => { 
+        startTitleGlitch(); // Inicia o glitch da aba do navegador
+        initTerminal();     // Prepara o leitor da senha secreta
+        startSystemInfo(); 
+        triggerGlitch(); 
+        runBoot(); 
+    };
 </script>
 </body>
 </html>
