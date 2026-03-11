@@ -218,6 +218,8 @@
         const b = document.getElementById('main-body');
         const l = document.getElementById('loader');
         const m = document.getElementById('loader-msg');
+        const vTab = document.getElementById('visual-tab');
+        
         b.classList.add('glitch-shake');
         locked = true;
 
@@ -230,6 +232,17 @@
             l.style.display = 'flex';
             m.classList.add('blink-alert');
             m.innerText = "WHY ARE YOU DOING THIS?";
+            setTimeout(() => { reboot(); }, 5000);
+        } else if (clicks === 10) {
+            l.style.display = 'flex';
+            m.classList.add('blink-alert');
+            m.innerText = "STOP BEING CURIOUS - LOCKDOWN PROTOCOL ACTIVATED";
+            setTimeout(() => { reboot(); }, 6000);
+        } else if (clicks === 15) {
+            l.style.display = 'flex';
+            m.classList.add('blink-alert');
+            m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK.";
+            vTab.style.display = 'block';
             setTimeout(() => { reboot(); }, 5000);
         } else {
             l.style.display = 'flex';
