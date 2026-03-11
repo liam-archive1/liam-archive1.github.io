@@ -3,174 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIAM FƎNTI | ARCHIVE_V15_STABLE</title>
+    <title>LIAM FENTI | ARCHIVE_V15_STABLE</title>
+    
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2300ff95'/><text y='80' x='15' font-family='monospace' font-size='90' font-weight='bold' fill='%23000'>_</text></svg>">
     
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap');
 
-        /* --- CURSOR CUSTOMIZADO --- */
-        html, body, .nav-item, #title-liam, #shop-btn, a {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%2300ff95"/><rect x="0" y="9" width="20" height="2" fill="%2300ff95"/></svg>') 10 10, crosshair !important;
+        /* ==========================================================================
+           CSS DA FASE 1 (INTRODUÇÃO MATRIX / QUIZ)
+           ========================================================================== */
+        
+        #phase-1 {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000a05; overflow: hidden;
+            font-family: 'VT323', monospace; color: #00ff95;
+            z-index: 999999;
+            transition: opacity 0.2s ease;
         }
 
-        /* --- DESATIVAR DOWNLOADS & VELOCIDADE --- */
+        #matrix-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.6; }
+
+        #phase-1::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(0, 10, 5, 0) 50%, rgba(0, 0, 0, 0.4) 50%), linear-gradient(90deg, rgba(0, 255, 149, 0.04), rgba(0, 100, 50, 0.02), rgba(0, 200, 100, 0.04));
+            z-index: 9999; background-size: 100% 2px, 3px 100%; pointer-events: none;
+        }
+        #phase-1::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.12; z-index: 9998; pointer-events: none;
+        }
+
+        #intro-boot-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 10, 5, 0.95); z-index: 20000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-shadow: 0 0 10px #00ff95; transition: opacity 1s ease;
+        }
+        #intro-boot-content { text-align: center; width: 90%; max-width: 600px; display: flex; flex-direction: column; align-items: center; }
+        #quiz-question { font-size: 22px; margin-bottom: 20px; letter-spacing: 2px; padding: 5px 10px; }
+        #quiz-input {
+            background: transparent; border: none; border-bottom: 1px solid rgba(0, 255, 149, 0.3);
+            color: #fff; font-family: 'VT323', monospace; font-size: 20px; text-align: center;
+            width: 50%; margin: 0 auto 10px auto; outline: none; text-shadow: 0 0 5px rgba(0, 255, 149, 0.5);
+            text-transform: uppercase; transition: border-bottom 0.3s ease;
+        }
+        #quiz-input:focus { border-bottom: 1px solid rgba(0, 255, 149, 0.8); }
+        #quiz-input::placeholder { color: rgba(0, 255, 149, 0.3); }
+        #quiz-hint { font-size: 16px; color: rgba(0, 255, 149, 0.6); min-height: 24px; margin-bottom: 20px; text-shadow: 0 0 5px rgba(0, 255, 149, 0.5); opacity: 0; transition: opacity 0.8s ease; letter-spacing: 1px; }
+        
+        #intro-boot-loader-bar { width: 100%; height: 4px; background: rgba(0, 255, 149, 0.2); position: relative; }
+        #intro-boot-progress { height: 100%; width: 0%; background: #00ff95; box-shadow: 0 0 10px #00ff95, 0 0 20px #00cc7a; transition: width 0.4s ease; }
+
+        .glitch-error { animation: fatalFlash 0.15s infinite, vhsTear 0.2s infinite !important; }
+        @keyframes fatalFlash { 0%, 100% { background: #000; color: #f00; } 33% { background: #fff; color: #000; text-shadow: none; } 66% { background: #f00; color: #fff; text-shadow: none; } }
+        @keyframes vhsTear { 0%, 60%, 100% { transform: skewX(0deg); } 20% { transform: skewX(-10deg); text-shadow: 4px 0 red, -4px 0 blue; } 40% { transform: skewX(10deg); text-shadow: -4px 0 red, 4px 0 blue; } 80% { transform: skewX(3deg); } }
+
+        /* CRONÔMETRO */
+        #countdown-timer {
+            position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 45px; color: #ff003c; text-shadow: 0 0 15px #ff003c, 0 0 30px #ff003c;
+            letter-spacing: 5px; z-index: 10001; display: none; opacity: 0; transition: opacity 2s ease;
+        }
+
+        #wake-up-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10000; pointer-events: none; font-size: 20px; font-weight: normal; color: #fff; text-shadow: 2px 0 0 #00ff95, -2px 0 0 #008040, 0 0 12px #00cc7a; letter-spacing: 4px; white-space: nowrap; min-height: 24px; }
+        #wake-up-container span { display: inline-block; transition: opacity 0.05s ease, transform 0.05s ease; }
+        .creepy-text { position: absolute; color: #00ff95; text-shadow: 2px 0px 0px #00cc7a, -2px 0px 0px #008040, 0 0 10px #00ff95; font-size: 20px; font-weight: bold; pointer-events: none; z-index: 100; letter-spacing: 1px; text-transform: uppercase; }
+
+        .intro-floating-monitor { position: absolute; background: rgba(0, 10, 5, 0.95); border: 1px solid rgba(0, 255, 149, 0.8); box-shadow: 0 0 15px rgba(0, 255, 149, 0.4); z-index: 5; border-radius: 2px; overflow: hidden; opacity: 0; pointer-events: auto; will-change: transform, opacity; backface-visibility: hidden; display: none; }
+        .intro-monitor-header { background: linear-gradient(90deg, rgba(0, 100, 50, 0.6), rgba(0, 255, 149, 0.3)); color: #aaffcc; text-shadow: 0 0 5px #00ff95; font-size: 10px; padding: 2px 4px; border-bottom: 1px solid rgba(0, 255, 149, 0.8); text-align: center; letter-spacing: 1px; cursor: grab; user-select: none; touch-action: none; font-family: 'VT323', monospace; }
+        .intro-monitor-header:active { cursor: grabbing; }
+        .intro-floating-monitor video { width: 100%; display: block; filter: grayscale(0.2) sepia(1) hue-rotate(80deg) contrast(1.8) brightness(0.8) blur(0.5px); pointer-events: none; }
+
+        /* ==========================================================================
+           CSS DA FASE 2 (LIAM ARCHIVE PRINCIPAL)
+           ========================================================================== */
+        
+        html, body, .nav-item, #title-liam, #shop-btn, a { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%2300ff95"/><rect x="0" y="9" width="20" height="2" fill="%2300ff95"/></svg>') 10 10, crosshair !important; }
+        html.purple-protocol, html.purple-protocol body, html.purple-protocol .nav-item, html.purple-protocol #title-liam, html.purple-protocol #shop-btn, html.purple-protocol a { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%23a020f0"/><rect x="0" y="9" width="20" height="2" fill="%23a020f0"/></svg>') 10 10, crosshair !important; }
+
         video, audio { -webkit-user-select: none; user-select: none; }
-        video::-internal-media-controls-download-button, 
-        audio::-internal-media-controls-download-button { display:none !important; }
-        video::-webkit-media-controls-enclosure, 
-        audio::-webkit-media-controls-enclosure { overflow:hidden; }
+        video::-internal-media-controls-download-button, audio::-internal-media-controls-download-button { display:none !important; }
+        video::-webkit-media-controls-enclosure, audio::-webkit-media-controls-enclosure { overflow:hidden; }
         video::-webkit-media-controls-panel { width: calc(100% + 35px); }
         audio::-webkit-media-controls-panel { width: calc(100% + 35px); }
 
-        /* --- CONFIGURAÇÃO BASE TÍTULO E SHOP --- */
-        #title-liam, #shop-btn { 
-            color: #00ff95; 
-            transition: text-shadow 0.2s ease, transform 0.2s ease, color 0.3s ease; 
-            text-decoration: none;
-        }
+        #title-liam, #shop-btn { color: #00ff95; transition: text-shadow 0.2s ease, transform 0.2s ease, color 0.3s ease; text-decoration: none; }
+        @keyframes neonFlicker { 0%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 3% { opacity: 0.2; text-shadow: none; } 6% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 7% { opacity: 0.4; text-shadow: none; } 8%, 9% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 10% { opacity: 0.1; text-shadow: none; } 11%, 30% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 31% { opacity: 0.3; text-shadow: none; } 33%, 50% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 51% { opacity: 0.5; text-shadow: none; } 52%, 70% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 72% { opacity: 0.2; text-shadow: none; } 73%, 90% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } 91% { opacity: 0.4; text-shadow: none; } 92% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; } }
+        #title-liam:hover, #shop-btn:hover { animation: neonFlicker 3.2s infinite alternate; transform: scale(1.02); color: #fff; }
 
-        /* --- ANIMAÇÃO LÂMPADA ANTIGA (FLICKER ALEATÓRIO) --- */
-        @keyframes neonFlicker {
-            0%, 100% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            3% { opacity: 0.2; text-shadow: none; }
-            6% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            7% { opacity: 0.4; text-shadow: none; }
-            8% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            9% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            10% { opacity: 0.1; text-shadow: none; }
-            11% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            30% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            31% { opacity: 0.3; text-shadow: none; }
-            33% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            50% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            51% { opacity: 0.5; text-shadow: none; }
-            52% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            70% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            72% { opacity: 0.2; text-shadow: none; }
-            73% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            90% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-            91% { opacity: 0.4; text-shadow: none; }
-            92% { opacity: 1; text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
-        }
+        /* BOOT SCREEN DA FASE 2 */
+        #archive-boot-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 20000; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: monospace; color: #00ff95; text-shadow: 0 0 5px #00ff95; transition: opacity 1s ease;}
+        #archive-boot-loader-bar { width: 200px; height: 2px; background: rgba(0,255,149,0.2); margin-top: 10px; position: relative; }
+        #archive-boot-progress { height: 100%; background: #00ff95; width: 0%; box-shadow: 0 0 10px #00ff95; transition: width 0.1s linear;}
 
-        #title-liam:hover, #shop-btn:hover {
-            animation: neonFlicker 3.2s infinite alternate; 
-            transform: scale(1.02);
-            color: #fff;
-        }
-
-        /* --- TELA DE BOOT INICIAL --- */
-        #boot-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 20000; display: flex;
-            flex-direction: column; align-items: center; justify-content: center;
-            font-family: monospace; color: #00ff95; text-shadow: 0 0 5px #00ff95;
-        }
-        #boot-loader-bar { width: 200px; height: 2px; background: rgba(0,255,149,0.2); margin-top: 10px; position: relative; }
-        #boot-progress { height: 100%; background: #00ff95; width: 0%; box-shadow: 0 0 10px #00ff95; }
-
-        /* --- FILTRO VHS OTIMIZADO --- */
-        body::before {
-            content: " "; display: block; position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: 
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05)),
-                radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
-            z-index: 9999; 
-            background-size: 100% 3px, 4px 100%, 100% 100%; 
-            pointer-events: none;
-            animation: vhs-flicker 0.1s infinite;
-            will-change: opacity; 
-            transform: translateZ(0);
-        }
-        @keyframes vhs-flicker { 0% { opacity: 0.98; } 50% { opacity: 1; } 100% { opacity: 0.99; } }
-
-        /* --- MONITORES DE VÍDEO FLUTUANTES OTIMIZADOS --- */
-        .floating-monitor {
-            position: fixed;
-            background: rgba(0, 0, 0, 0.95);
-            border: 1px solid rgba(0, 255, 149, 0.3);
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-            z-index: 5; 
-            border-radius: 4px;
-            overflow: hidden;
-            opacity: 0;
-            pointer-events: auto; 
-            will-change: transform, opacity; 
-            backface-visibility: hidden;
-        }
-        .monitor-header {
-            background: rgba(0, 255, 149, 0.1);
-            color: #00ff95;
-            font-family: monospace;
-            font-size: 10px;
-            padding: 4px 8px;
-            border-bottom: 1px solid rgba(0, 255, 149, 0.3);
-            text-align: center;
-            letter-spacing: 1px;
-            cursor: grab; 
-            user-select: none;
-            touch-action: none; /* CORREÇÃO MOBILE: Impede rolagem ao arrastar */
-        }
+        #phase-2::before { content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05)), radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%); z-index: 9999; background-size: 100% 3px, 4px 100%, 100% 100%; pointer-events: none; animation: vhs-flicker 0.1s infinite; will-change: opacity; transform: translateZ(0); }
+        
+        .floating-monitor { position: fixed; background: rgba(0, 0, 0, 0.95); border: 1px solid rgba(0, 255, 149, 0.3); box-shadow: 0 0 20px rgba(0,0,0,0.8); z-index: 5; border-radius: 4px; overflow: hidden; opacity: 0; pointer-events: auto; will-change: transform, opacity; backface-visibility: hidden; font-family: 'Crimson Pro', serif; }
+        .monitor-header { background: rgba(0, 255, 149, 0.1); color: #00ff95; font-family: monospace; font-size: 10px; padding: 4px 8px; border-bottom: 1px solid rgba(0, 255, 149, 0.3); text-align: center; letter-spacing: 1px; cursor: grab; user-select: none; }
         .monitor-header:active { cursor: grabbing; }
-        .floating-monitor video {
-            width: 100%;
-            display: block;
-            filter: grayscale(1) contrast(1.4) brightness(0.8);
-            pointer-events: none; 
-        }
+        .floating-monitor video { width: 100%; display: block; filter: grayscale(1) contrast(1.4) brightness(0.8); pointer-events: none; }
 
-        /* --- TERMINAL SECRETO --- */
-        .secret-terminal {
-            margin-top: auto;
-            padding: 15px;
-            font-family: monospace;
-            font-size: 14px;
-            color: #00ff95;
-            border-top: 1px solid rgba(0, 255, 149, 0.3);
-            display: flex;
-            align-items: center;
-        }
-        .secret-terminal input {
-            background: transparent; border: none; color: inherit;
-            font-family: inherit; width: 100%; outline: none; font-size: 14px; margin-left: 5px;
-        }
+        .secret-terminal { margin-top: auto; padding: 15px; font-family: monospace; font-size: 14px; color: #00ff95; border-top: 1px solid rgba(0, 255, 149, 0.3); display: flex; align-items: center; }
+        .secret-terminal input { background: transparent; border: none; color: inherit; font-family: inherit; width: 100%; outline: none; font-size: 14px; margin-left: 5px; }
         .secret-terminal input::placeholder { color: rgba(0, 255, 149, 0.4); }
 
-        /* --- PROTOCOLO ROXO (ATIVADO NO CLIQUE 15) --- */
-        .purple-protocol #boot-screen { color: #a020f0; text-shadow: 0 0 5px #a020f0; }
-        .purple-protocol #boot-progress { background: #a020f0; box-shadow: 0 0 10px #a020f0; }
-        
+        .purple-protocol #archive-boot-screen { color: #a020f0; text-shadow: 0 0 5px #a020f0; }
+        .purple-protocol #archive-boot-progress { background: #a020f0; box-shadow: 0 0 10px #a020f0; }
         .purple-protocol #title-liam, .purple-protocol #shop-btn, .purple-protocol #clock, .purple-protocol #fps-counter { color: #a020f0 !important; text-shadow: 0 0 5px #a020f0; }
         .purple-protocol #title-liam:hover, .purple-protocol #shop-btn:hover { color: #fff !important; text-shadow: 0 0 10px #a020f0, 0 0 25px #a020f0, 0 0 45px #a020f0 !important; }
         .purple-protocol .nav-item.active { color: #a020f0 !important; border-left: 2px solid #a020f0 !important; background: rgba(160, 32, 240, 0.1); }
         .purple-protocol header { border-bottom: 1px solid rgba(160, 32, 240, 0.4); }
-        .purple-protocol body::before { filter: hue-rotate(280deg) contrast(1.5); }
+        .purple-protocol #phase-2::before { filter: hue-rotate(280deg) contrast(1.5); }
         .purple-protocol .audio-visualizer { border: 1px solid rgba(160, 32, 240, 0.5); }
         .purple-protocol .floating-monitor { border-color: rgba(160, 32, 240, 0.4); }
         .purple-protocol .monitor-header { background: rgba(160, 32, 240, 0.1); color: #a020f0; border-color: rgba(160, 32, 240, 0.4); }
         .purple-protocol .secret-terminal { color: #a020f0; border-top: 1px solid rgba(160, 32, 240, 0.4); }
         .purple-protocol .secret-terminal input::placeholder { color: rgba(160, 32, 240, 0.4); }
+
+        * { box-sizing: border-box; }
+        body { margin: 0; background: #001f3d; overflow: hidden; } 
         
-        /* Cursor roxo */
-        html.purple-protocol, html.purple-protocol body, html.purple-protocol .nav-item, html.purple-protocol #title-liam, html.purple-protocol #shop-btn, html.purple-protocol a {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect x="9" y="0" width="2" height="20" fill="%23a020f0"/><rect x="0" y="9" width="20" height="2" fill="%23a020f0"/></svg>') 10 10, crosshair !important;
+        #phase-2 {
+            display: none; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif; color: #e0e0e0;
+            justify-content: center; align-items: center; height: 100vh; width: 100vw; transition: background 0.3s; perspective: 1000px;
         }
 
-        /* --- ESTRUTURA GERAL --- */
-        * { box-sizing: border-box; }
-        body { margin: 0; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif; background: #001f3d; color: #e0e0e0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; transition: background 0.3s; perspective: 1000px; }
         .main-archive { width: 100%; max-width: 900px; height: 82vh; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15); display: flex; flex-direction: column; position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,1); transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg); border-radius: 10px; opacity: 0; transition: opacity 2s ease; z-index: 10; }
         header { padding: 20px; border-bottom: 1px solid rgba(0, 255, 149, 0.3); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
         #title-liam { user-select: none; margin: 0; font-size: 22px; }
         #clock { font-family: monospace; font-size: 14px; color: #00ff95; text-shadow: 0 0 5px #00ff95; }
         #fps-counter { font-family: monospace; font-size: 10px; color: #00ff95; opacity: 0.7; }
         .archive-body { display: flex; flex: 1; overflow: hidden; }
-        
         nav { width: 180px; background: rgba(0, 0, 0, 0.5); border-right: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; display: flex; flex-direction: column; }
-        
         .nav-item { display: block; padding: 15px; color: #aaa; text-decoration: none; font-size: 14px; border-left: 2px solid transparent; }
         .nav-item.active { color: #00ff95; border-left: 2px solid #00ff95; background: rgba(0, 255, 149, 0.1); }
         .fade-in-element { opacity: 0; transform: translateY(10px); transition: opacity 1.5s ease, transform 1.5s ease; }
@@ -189,453 +156,565 @@
         .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
         @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- GLITCH SUAVE E TELA PISCANDO OTIMIZADO (CORREÇÃO DE LAG) --- */
-        body.glitch-shake { 
-            animation: bodyFlash 0.1s infinite !important; 
-        }
-        body.glitch-shake .main-archive,
-        body.glitch-shake .news-ticker {
-            animation: elementShake 0.1s infinite !important;
-            filter: sepia(1) saturate(4) hue-rotate(-50deg) contrast(1.5) !important;
-        }
-
-        @keyframes bodyFlash { 
-            0%, 30%, 50%, 70%, 90%, 100% { background-color: #001f3d !important; }
-            10%, 60% { background-color: #ff0000 !important; }
-            20% { background-color: #000000 !important; }
-            40%, 80% { background-color: #ffffff !important; }
-        }
-
-        @keyframes elementShake { 
-            0%, 100% { transform: translate3d(0, 0, 0); }
-            10% { transform: translate3d(-2px, -1px, 0); }
-            20% { transform: translate3d(2px, 1px, 0); }
-            30% { transform: translate3d(-1px, 2px, 0); }
-            40% { transform: translate3d(2px, -1px, 0); color: #000; }
-            50% { transform: translate3d(-3px, 1px, 0); }
-            60% { transform: translate3d(3px, -1px, 0); }
-            70% { transform: translate3d(-1px, 3px, 0); }
-            80% { transform: translate3d(1px, -3px, 0); }
-            90% { transform: translate3d(-2px, -1px, 0); }
-        }
-
+        /* GLITCH OTIMIZADO E REDUZIDO */
+        body.glitch-shake { animation: bodyFlash 0.1s infinite !important; }
+        body.glitch-shake #phase-1, body.glitch-shake .main-archive, body.glitch-shake .news-ticker { animation: elementShake 0.1s infinite !important; filter: sepia(1) saturate(4) hue-rotate(-50deg) contrast(1.5) !important; }
+        @keyframes bodyFlash { 0%, 30%, 50%, 70%, 90%, 100% { background-color: #001f3d !important; } 10%, 60% { background-color: #ff0000 !important; } 20% { background-color: #000000 !important; } 40%, 80% { background-color: #ffffff !important; } }
+        @keyframes elementShake { 0%, 100% { transform: translate3d(0, 0, 0); } 10% { transform: translate3d(-2px, -1px, 0); } 20% { transform: translate3d(2px, 1px, 0); } 30% { transform: translate3d(-1px, 2px, 0); } 40% { transform: translate3d(2px, -1px, 0); color: #000; } 50% { transform: translate3d(-3px, 1px, 0); } 60% { transform: translate3d(3px, -1px, 0); } 70% { transform: translate3d(-1px, 3px, 0); } 80% { transform: translate3d(1px, -3px, 0); } 90% { transform: translate3d(-2px, -1px, 0); } }
         .blink-alert { animation: blinkRed 0.2s infinite; font-weight: bold; letter-spacing: 2px; }
         @keyframes blinkRed { 0% { color: #ff0000; } 50% { color: #ffffff; } 100% { color: #ff0000; } }
 
-        /* --- VERSÃO MOBILE APRIMORADA --- */
+        /* ==========================================================================
+           VERSÃO MOBILE APRIMORADA
+           ========================================================================== */
         @media (max-width: 768px) { 
-            body { padding: 35px 0 10px; align-items: center; } 
+            #title-liam { animation: neonFlicker 3.2s infinite alternate; } /* Mantém flicker ativo em telas pequenas */
+            #phase-2 { padding: 35px 0 10px; align-items: center; } 
             .main-archive { width: 92%; height: 82vh; margin: 0 auto; transform: none; } 
             .archive-body { flex-direction: column; } 
-            
             nav { width: 100%; flex-direction: row; flex-wrap: wrap; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.1); justify-content: center; } 
             .nav-item { flex: 1 1 auto; text-align: center; padding: 12px 5px; font-size: 13px; }
-            
             .secret-terminal { width: 100%; border-top: 1px solid rgba(0, 255, 149, 0.3); border-left: none; margin: 0; justify-content: center; padding: 12px; font-size: 16px; }
             .purple-protocol .secret-terminal { border-top: 1px solid rgba(160, 32, 240, 0.4); border-left: none; }
-            
             main { flex: 1; overflow-y: auto; padding: 15px; max-height: none; } 
-            
-            #title-liam { animation: neonFlicker 3.2s infinite alternate !important; }
         }
     </style>
 </head>
-<body id="main-body" oncontextmenu="return false;">
+<body oncontextmenu="return false;">
 
-<div id="boot-screen">
-    <div style="font-size: 10px; margin-bottom: 5px;">INITIALIZING_LIAM_V15</div>
-    <div id="boot-perc">0%</div>
-    <div id="boot-loader-bar"><div id="boot-progress"></div></div>
+<div id="phase-1">
+    <canvas id="matrix-canvas"></canvas>
+
+    <div id="intro-boot-screen">
+        <div id="intro-boot-content">
+            <div id="quiz-question">INITIALIZING...</div>
+            <input type="text" id="quiz-input" autocomplete="off" spellcheck="false" placeholder="ENTER ANSWER_">
+            <div id="quiz-hint"></div>
+            <div id="intro-boot-loader-bar"><div id="intro-boot-progress"></div></div>
+        </div>
+    </div>
+
+    <div id="countdown-timer">00:40</div>
+
+    <div id="wake-up-container"></div>
+
+    <div class="intro-floating-monitor" id="intro-sys-monitor-1"><div class="intro-monitor-header">SYS_01</div><video preload="auto" muted playsinline></video></div>
+    <div class="intro-floating-monitor" id="intro-sys-monitor-2"><div class="intro-monitor-header">SYS_02</div><video preload="auto" muted playsinline></video></div>
+    <div class="intro-floating-monitor" id="intro-sys-monitor-3"><div class="intro-monitor-header">SYS_03</div><video preload="auto" muted playsinline></video></div>
+    <div class="intro-floating-monitor" id="intro-sys-monitor-4"><div class="intro-monitor-header">SYS_04</div><video preload="auto" muted playsinline></video></div>
 </div>
 
-<div class="news-ticker" id="ticker-news">
-    <div class="ticker-text" id="main-ticker-text">::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::</div>
-</div>
 
-<div class="floating-monitor" id="sys-monitor-1"><div class="monitor-header">SYS.CAM_01</div><video muted playsinline></video></div>
-<div class="floating-monitor" id="sys-monitor-2"><div class="monitor-header">SYS.CAM_02</div><video muted playsinline></video></div>
-<div class="floating-monitor" id="sys-monitor-3"><div class="monitor-header">SYS.CAM_03</div><video muted playsinline></video></div>
-<div class="floating-monitor" id="sys-monitor-4"><div class="monitor-header">SYS.CAM_04</div><video muted playsinline></video></div>
-<div class="floating-monitor" id="sys-monitor-5"><div class="monitor-header">SYS.CAM_05</div><video muted playsinline></video></div>
-<div class="floating-monitor" id="sys-monitor-6"><div class="monitor-header">SYS.CAM_06</div><video muted playsinline></video></div>
+<div id="phase-2" style="display: none;">
+    <div id="archive-boot-screen">
+        <div style="font-size: 10px; margin-bottom: 5px;">INITIALIZING_LIAM_V15</div>
+        <div id="archive-boot-perc">0%</div>
+        <div id="archive-boot-loader-bar"><div id="archive-boot-progress"></div></div>
+    </div>
 
-<div class="main-archive" id="archive-container">
-    <header>
-        <div>
-            <div style="font-size: 9px; opacity: 0.5;">ROOT:/LIAM/ARCHIVE/</div>
-            <h1 id="title-liam" onclick="liamViolation()">LIAM F<span style="display: inline-block; transform: scaleX(-1);">E</span>NTI</h1>
-        </div>
-        <div class="system-info">
-            <div id="clock">00:00:00</div>
-            <div id="fps-counter">FPS: 60.0</div>
-        </div>
-    </header>
+    <div class="news-ticker" id="ticker-news">
+        <div class="ticker-text" id="main-ticker-text">::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::</div>
+    </div>
 
-    <div class="archive-body">
-        <nav id="sidebar-nav">
-            <div id="audio-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'audio')">AUDIO.DAT</div>
-            <div id="visual-tab" class="nav-item fade-in-element" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
-            <div class="nav-item fade-in-element" onclick="tabAction(this, 'feed')">FEED.TXT</div>
-            <div id="id-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
-            <a id="shop-btn" href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element">SHOP_NOW.EXE</a>
-            
-            <div class="secret-terminal fade-in-element">
-                <span>></span><input type="text" id="terminal-input" autocomplete="off" spellcheck="false" maxlength="15">
+    <div class="floating-monitor" id="sys-monitor-1"><div class="monitor-header">SYS.CAM_01</div><video muted playsinline></video></div>
+    <div class="floating-monitor" id="sys-monitor-2"><div class="monitor-header">SYS.CAM_02</div><video muted playsinline></video></div>
+    <div class="floating-monitor" id="sys-monitor-3"><div class="monitor-header">SYS.CAM_03</div><video muted playsinline></video></div>
+    <div class="floating-monitor" id="sys-monitor-4"><div class="monitor-header">SYS.CAM_04</div><video muted playsinline></video></div>
+    <div class="floating-monitor" id="sys-monitor-5"><div class="monitor-header">SYS.CAM_05</div><video muted playsinline></video></div>
+    <div class="floating-monitor" id="sys-monitor-6"><div class="monitor-header">SYS.CAM_06</div><video muted playsinline></video></div>
+
+    <div class="main-archive" id="archive-container">
+        <header>
+            <div>
+                <div style="font-size: 9px; opacity: 0.5;">ROOT:/LIAM/ARCHIVE/</div>
+                <h1 id="title-liam" onclick="liamViolation()">LIAM F<span style="display: inline-block; transform: scaleX(-1);">E</span>NTI</h1>
             </div>
-        </nav>
-        <main id="viewport-scroll">
-            <div id="loader" class="blink-underline"><span id="loader-msg"></span></div>
-            <div id="viewport"></div>
-        </main>
+            <div class="system-info">
+                <div id="clock">00:00:00</div>
+                <div id="fps-counter">FPS: 60.0</div>
+            </div>
+        </header>
+
+        <div class="archive-body">
+            <nav id="sidebar-nav">
+                <div id="audio-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'audio')">AUDIO.DAT</div>
+                <div id="visual-tab" class="nav-item fade-in-element" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
+                <div class="nav-item fade-in-element" onclick="tabAction(this, 'feed')">FEED.TXT</div>
+                <div id="id-btn" class="nav-item fade-in-element" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
+                <a id="shop-btn" href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item fade-in-element">SHOP_NOW.EXE</a>
+                
+                <div class="secret-terminal fade-in-element">
+                    <span>></span><input type="text" id="terminal-input" autocomplete="off" spellcheck="false" maxlength="15">
+                </div>
+            </nav>
+            <main id="viewport-scroll">
+                <div id="loader" class="blink-underline"><span id="loader-msg"></span></div>
+                <div id="viewport"></div>
+            </main>
+        </div>
     </div>
 </div>
 
 <script>
-    let clicks = 0; let locked = false;
-    document.addEventListener('contextmenu', e => e.preventDefault());
+    /* ==========================================================================
+       VARIÁVEIS DE CONTROLE E LIMPEZA (EVITA O TRAVAMENTO DA FASE 2)
+       ========================================================================== */
+    let phase1Active = true;
+    let matrixIntervalId, typeMachineIntervalId, typeMachineNextId, glitchTextTimeoutId;
+    let glitchIntervals = [];
 
-    // --- GLITCH DA ABA DO NAVEGADOR ---
-    function startTitleGlitch() {
-        const originalTitle = "LIAM FƎNTI | ARCHIVE_V15_STABLE";
-        const glitches = ["L!4M F3NT1 | C0RRUPT3D", "01001100 01101001", "SYS_FAIL | V15", "L*** F**** | UNKNOWN"];
-        setInterval(() => {
-            if (Math.random() > 0.6) {
-                document.title = glitches[Math.floor(Math.random() * glitches.length)];
-                setTimeout(() => { document.title = originalTitle; }, Math.random() * 400 + 100);
-            }
-        }, 3500);
+    // Lista global de TODOS os vídeos para Pré-carregamento imediato no cache
+    const allVideoUrls = [
+        "https://www.dropbox.com/scl/fi/as6qstpnas95yhadj85k5/Pharrell_In_Studio_with_702_for_a_Star_song_PART_4.mp4?rlkey=2vbt6wqwzc0qg3c66faayxr0t&st=1ynduhac&raw=1",
+        "https://www.dropbox.com/scl/fi/8uiidtqfeg1r56ljogdmf/Pharrell_Williams_Launches_New_ICECREAM_Skate_Team_with_Unreleased_Beat.mp4?rlkey=dusegknrk8h9cviqfueutoweg&st=151bxwmb&raw=1",
+        "https://www.dropbox.com/scl/fi/nnzjssrdn8nexv4jp3ll4/T-Funk-Friends-SF-Spitfire-Wheels-360p-h264-youtube.mp4?rlkey=fjmcngfnouzsp1c7ahk3wfzd9&st=pjo11g9s&raw=1",
+        "https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1",
+        "https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1",
+        "https://www.dropbox.com/scl/fi/z3l1l7l07mozaalh820e5/videoplayback.mp4?rlkey=iu6efot92aplohnjh69d2qm0l&st=8lmmv1yf&raw=1",
+        "https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"
+    ];
+
+    // O PRÉ-CARREGAMENTO SEGURO (MÉTODO FETCH SILENCIOSO)
+    function preloadAssetsSafely() {
+        allVideoUrls.forEach(url => {
+            const req = new XMLHttpRequest();
+            req.open('GET', url, true);
+            req.responseType = 'blob'; 
+            req.send(); 
+        });
     }
 
-    // --- TERMINAL SECRETO LOGIC ---
-    function initTerminal() {
-        const input = document.getElementById('terminal-input');
-        if(!input) return;
+    /* ==========================================================================
+       JAVASCRIPT - FASE 1
+       ========================================================================== */
+    function initMatrixRain() {
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ｦｧｨｩｪｫｬｭｮｯｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ'.split('');
+        const fontSize = 16; const columns = canvas.width / fontSize;
+        const drops = []; for (let x = 0; x < columns; x++) drops[x] = -1; 
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 10, 5, 0.15)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = fontSize + 'px VT323';
+            for (let i = 0; i < drops.length; i++) {
+                if (drops[i] >= 0) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillStyle = '#ffffff'; ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    ctx.fillStyle = '#00ff95';
+                    if (drops[i] * fontSize > canvas.height) drops[i] = -1; else drops[i]++;
+                } else { if (Math.random() > 0.992) drops[i] = 0; }
+            }
+        }
+        matrixIntervalId = setInterval(drawMatrix, 50);
+        window.addEventListener('resize', () => { if(phase1Active){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }});
+    }
+
+    const quizData = [
+        { q: "WHAT DOES BPM STAND FOR?", a: ["BEATS PER MINUTE", "BEAT PER MINUTE", "BEATS"], hint: "HINT: It measures the tempo of a song." },
+        { q: "WHAT GENRE ORIGINATED FROM HIP HOP?", a: ["TRAP", "TRAP MUSIC", "BOOM BAP", "DRILL", "RAP"], hint: "HINT: It's known for heavy 808s and fast hi-hats." },
+        { q: "WHAT IS A REPEATING AUDIO SECTION CALLED?", a: ["LOOP", "SAMPLE"], hint: "HINT: It goes round and round continuously." },
+        { q: "WHAT AUDIO EFFECT REFLECTS SOUND LIKE AN ECHO?", a: ["DELAY", "REVERB", "ECHO"], hint: "HINT: It makes a sound bounce back." },
+        { q: "WHO ARE YOU LOOKING FOR ON THIS SITE?", a: ["LIAM"], hint: "HINT: The architect of this archive." }
+    ];
+    let currentQuizStep = 0; let hintTimer;
+
+    function showQuestion() {
+        const questionText = document.getElementById('quiz-question');
+        const hintText = document.getElementById('quiz-hint');
+        questionText.innerText = quizData[currentQuizStep].q;
+        hintText.style.opacity = '0'; hintText.innerText = quizData[currentQuizStep].hint;
+        clearTimeout(hintTimer); hintTimer = setTimeout(() => { hintText.style.opacity = '1'; }, 3000);
+    }
+
+    function initBootQuiz() {
+        preloadAssetsSafely(); // Baixa silenciosamente na rede sem travar o processador
+
+        const input = document.getElementById('quiz-input');
+        const progress = document.getElementById('intro-boot-progress');
+        const bootScreen = document.getElementById('intro-boot-screen');
+        const questionElement = document.getElementById('quiz-question');
+        const hintText = document.getElementById('quiz-hint');
+        
+        showQuestion(); input.focus();
+        
         input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                const val = input.value.toUpperCase().trim();
-                input.value = '';
-                if (val === 'BEAUTHENTIC') {
-                    const b = document.getElementById('main-body');
-                    b.classList.add('glitch-shake');
-                    setTimeout(() => b.classList.remove('glitch-shake'), 1500);
-                    document.getElementById('main-ticker-text').innerText = "::: BEAUTHENTIC PROTOCOL ACTIVATED ::: YOU ALREADY KNOW TOO MUCH ::: DATES WILL BE REVEALED ON MY INSTAGRAM ::: STAY TUNED, PROSPECT :::";
-                } else if (val !== '') {
-                    input.placeholder = "DENIED";
-                    setTimeout(() => input.placeholder = "", 2000);
+                const answer = input.value.trim().toUpperCase();
+                if (quizData[currentQuizStep].a.includes(answer)) {
+                    currentQuizStep++; progress.style.width = (currentQuizStep / quizData.length) * 100 + '%'; input.value = '';
+                    if (currentQuizStep < quizData.length) { showQuestion(); } 
+                    else {
+                        clearTimeout(hintTimer); hintText.style.opacity = '0'; questionElement.innerText = "ACCESS GRANTED_"; input.style.display = 'none';
+                        setTimeout(() => { bootScreen.style.opacity = '0'; setTimeout(() => { bootScreen.style.display = 'none'; startMainSite(); }, 1000); }, 1000);
+                    }
+                } else {
+                    questionElement.classList.add('glitch-error'); input.value = ''; input.placeholder = "DENIED_"; input.style.color = "#ff0000";
+                    setTimeout(() => { questionElement.classList.remove('glitch-error'); input.placeholder = "ENTER ANSWER_"; input.style.color = "#fff"; }, 1000); 
                 }
             }
         });
     }
 
-    // --- LOGICA DOS MONITORES FLUTUANTES APRIMORADA ---
-    const sideVideos = [
+    const baseText = "WAKE_UP_TO_REALITY_";
+    const creepyDialogues = ["CAN YOU SEE IT RIGHT? NOTHING IS REAL_", "I DON'T THINK I'M CRAZY?_", "I THINK I BURNED THE NOODLES_", "WHY ARE YOU STILL HERE?_", "DID YOU LOCK THE DOOR?_", "I FORGOT TO SAVE THE PROJECT_", "THE SYSTEM IS WATCHING YOU_", "I NEED MORE COFFEE FOR THIS_"];
+    const wakeupContainer = document.getElementById('wake-up-container');
+
+    function renderInitialText(str) { wakeupContainer.innerHTML = ''; str.split('').forEach(char => { const span = document.createElement('span'); span.innerText = char === ' ' ? '\u00A0' : char; wakeupContainer.appendChild(span); }); }
+    function backspaceText() { return new Promise(resolve => { const spans = Array.from(wakeupContainer.querySelectorAll('span')); let i = spans.length - 1; function eraseNext() { if (i >= 0 && phase1Active) { spans[i].remove(); i--; setTimeout(eraseNext, Math.random() * 50 + 30); } else { resolve(); } } eraseNext(); }); }
+    function typeText(str) { return new Promise(resolve => { let i = 0; function typeNext() { if (i < str.length && phase1Active) { const span = document.createElement('span'); span.innerText = str[i] === ' ' ? '\u00A0' : str[i]; wakeupContainer.appendChild(span); i++; setTimeout(typeNext, Math.random() * 100 + 50); } else { resolve(); } } typeNext(); }); }
+    
+    async function runTypingCycle() { 
+        if(!phase1Active) return;
+        const nextPhrase = creepyDialogues[Math.floor(Math.random() * creepyDialogues.length)]; 
+        await backspaceText(); await new Promise(r => setTimeout(r, 600)); await typeText(nextPhrase); 
+        await new Promise(r => setTimeout(r, 5000)); 
+        await backspaceText(); await new Promise(r => setTimeout(r, 400)); await typeText(baseText); 
+    }
+    
+    function startTypingMachine() {
+        renderInitialText(baseText);
+        function scheduleNext() { 
+            if(!phase1Active) return;
+            typeMachineNextId = setTimeout(async () => { await runTypingCycle(); scheduleNext(); }, Math.random() * 4000 + 4000); 
+        }
+        scheduleNext();
+        
+        typeMachineIntervalId = setInterval(() => {
+            const spans = wakeupContainer.querySelectorAll('span'); if (spans.length === 0) return; 
+            const randomSpan = spans[Math.floor(Math.random() * spans.length)]; const isBlinking = Math.random() > 0.4; 
+            randomSpan.style.opacity = isBlinking ? '0' : '1'; randomSpan.style.transform = isBlinking ? `translateY(${Math.random() * 4 - 2}px)` : 'translateY(0)';
+            setTimeout(() => { if (randomSpan && document.body.contains(randomSpan)) { randomSpan.style.opacity = '1'; randomSpan.style.transform = 'translateY(0)'; } }, Math.random() * 150 + 50); 
+        }, 60);
+    }
+
+    const sideGlitches = ["LIAM DID THIS", "LIAM KNOWS ABOUT YOU", "HE IS WATCHING", "YOU ARE NOT ALONE", "SYS.CORRUPTION_100%", "DO NOT LOOK BEHIND YOU", "THE ARCHIVE IS ALIVE", "REALITY_IS_BROKEN"];
+    function spawnGlitchText() {
+        if(!phase1Active) return;
+        const div = document.createElement('div'); div.className = 'creepy-text'; div.innerText = sideGlitches[Math.floor(Math.random() * sideGlitches.length)];
+        div.style.left = Math.random() * 60 + 20 + 'vw'; div.style.top = Math.random() * 60 + 20 + 'vh';
+        document.getElementById('phase-1').appendChild(div);
+        
+        let flickers = 0; const maxFlickers = Math.floor(Math.random() * 6) + 4; 
+        const glitchInterval = setInterval(() => { 
+            div.style.visibility = div.style.visibility === 'hidden' ? 'visible' : 'hidden'; 
+            div.style.transform = `translate(${Math.random() * 10 - 5}px, ${Math.random() * 6 - 3}px)`; 
+            flickers++; if (flickers > maxFlickers) { clearInterval(glitchInterval); div.remove(); } 
+        }, Math.random() * 40 + 30); 
+        glitchIntervals.push(glitchInterval);
+    }
+    
+    function scheduleNextGlitchText() { 
+        if(!phase1Active) return;
+        glitchTextTimeoutId = setTimeout(() => { spawnGlitchText(); scheduleNextGlitchText(); }, Math.random() * 4000 + 2000); 
+    }
+
+    function intro_makeDraggable(monitor) {
+        const header = monitor.querySelector('.intro-monitor-header'); let isDragging = false, startX, startY, initialLeft, initialTop;
+        const startDrag = (e) => { isDragging = true; const rect = monitor.getBoundingClientRect(); clearTimeout(monitor.driftTimeout); clearTimeout(monitor.fadeTimeout); monitor.style.transition = 'none'; monitor.style.transform = 'translate(0, 0)'; monitor.style.left = rect.left + 'px'; monitor.style.top = rect.top + 'px'; monitor.style.opacity = '0.95'; startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY; initialLeft = rect.left; initialTop = rect.top; };
+        const moveDrag = (e) => { if (!isDragging) return; const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY; monitor.style.left = (initialLeft + (clientX - startX)) + 'px'; monitor.style.top = (initialTop + (clientY - startY)) + 'px'; };
+        const endDrag = () => { if (isDragging) { isDragging = false; intro_resumeDrift(monitor); } };
+        header.addEventListener('mousedown', startDrag); document.addEventListener('mousemove', moveDrag); document.addEventListener('mouseup', endDrag);
+        header.addEventListener('touchstart', startDrag, {passive: true}); document.addEventListener('touchmove', moveDrag, {passive: true}); document.addEventListener('touchend', endDrag);
+    }
+
+    function intro_initSideMonitors() {
+        const monitors = document.querySelectorAll('.intro-floating-monitor');
+        monitors.forEach((monitor, index) => {
+            monitor.style.display = 'block'; intro_makeDraggable(monitor); monitor.dataset.side = (index % 2 === 0) ? 'left' : 'right';
+            const vid = monitor.querySelector('video'); vid.src = allVideoUrls[index % 3]; vid.load(); 
+            setTimeout(() => { if(phase1Active) intro_startDrift(monitor); }, index * 1200); 
+        });
+    }
+
+    function intro_startDrift(monitor) {
+        if(!phase1Active) return;
+        const vid = monitor.querySelector('video'); const size = Math.floor(Math.random() * 50) + 60; monitor.style.width = size + 'px';
+        let maxW = window.innerWidth - size, startX;
+        if (monitor.dataset.side === 'left') startX = Math.random() * (window.innerWidth * 0.25); else startX = (window.innerWidth * 0.75) + Math.random() * (window.innerWidth * 0.25) - size; 
+        startX = Math.max(0, Math.min(startX, maxW)); let startY = Math.random() * (window.innerHeight - size);
+        let driftX = (Math.random() * 120 - 60), driftY = (Math.random() * 120 - 60);
+        monitor.style.transition = 'none'; monitor.style.transform = `translate(0px, 0px)`; monitor.style.left = startX + 'px'; monitor.style.top = startY + 'px'; monitor.style.opacity = '0';
+        
+        const playAndDrift = () => {
+            if(!phase1Active) return;
+            if (vid.duration > 13) vid.currentTime = Math.random() * (vid.duration - 13); 
+            vid.play().catch(e => {}); let duration = Math.floor(Math.random() * 5000) + 8000; 
+            monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`; void monitor.offsetWidth; 
+            monitor.style.transform = `translate(${driftX}px, ${driftY}px)`; monitor.style.opacity = '0.85'; 
+            monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
+            monitor.driftTimeout = setTimeout(() => { intro_startDrift(monitor); }, duration + 400);
+        };
+        if (vid.readyState >= 2) { playAndDrift(); } else { vid.oncanplay = () => { vid.oncanplay = null; playAndDrift(); }; setTimeout(() => { if (monitor.style.opacity === '0') { vid.oncanplay = null; playAndDrift(); } }, 1500); }
+    }
+
+    function intro_resumeDrift(monitor) {
+        if(!phase1Active) return;
+        let driftX = (Math.random() * 80 - 40), driftY = (Math.random() * 80 - 40); let duration = Math.floor(Math.random() * 4000) + 5000; 
+        monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`; void monitor.offsetWidth;
+        monitor.style.transform = `translate(${driftX}px, ${driftY}px)`; monitor.style.opacity = '0.85';
+        monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
+        monitor.driftTimeout = setTimeout(() => { intro_startDrift(monitor); }, duration + 400);
+    }
+
+    // --- CRONÔMETRO E TRANSIÇÃO SUAVE E RÁPIDA ---
+    function startCountdown() {
+        const timerEl = document.getElementById('countdown-timer');
+        timerEl.style.display = 'block'; setTimeout(() => timerEl.style.opacity = '1', 100);
+        let timeLeft = 40;
+
+        const interval = setInterval(() => {
+            timeLeft--;
+            let displaySecs = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+            timerEl.innerText = '00:' + displaySecs;
+
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                triggerTransitionToPhase2();
+            }
+        }, 1000);
+    }
+
+    function cleanupPhase1() {
+        phase1Active = false; 
+        clearInterval(matrixIntervalId);
+        clearTimeout(typeMachineNextId);
+        clearInterval(typeMachineIntervalId);
+        clearTimeout(glitchTextTimeoutId);
+        glitchIntervals.forEach(id => clearInterval(id));
+        
+        // Desliga os vídeos da fase 1 completamente e limpa da memória para destravar a Fase 2
+        document.querySelectorAll('.intro-floating-monitor').forEach(m => {
+            clearTimeout(m.driftTimeout); clearTimeout(m.fadeTimeout);
+            const vid = m.querySelector('video');
+            if (vid) { vid.pause(); vid.removeAttribute('src'); vid.load(); }
+        });
+    }
+
+    function triggerTransitionToPhase2() {
+        // Glitch bem rápido e suave (apenas 300ms)
+        document.body.classList.add('glitch-shake');
+        
+        setTimeout(() => {
+            cleanupPhase1(); 
+            const p1 = document.getElementById('phase-1');
+            if(p1) p1.remove(); // Apaga o HTML da Fase 1 para aliviar a memória
+            
+            document.body.classList.remove('glitch-shake');
+            
+            const p2 = document.getElementById('phase-2');
+            p2.style.display = 'flex'; // Mostra a Fase 2
+            
+            startPhase2Archive(); // Dá o Boot Seguro
+        }, 300); // Transição super rápida
+    }
+
+    function startMainSite() {
+        startTypingMachine();
+        scheduleNextGlitchText();
+        intro_initSideMonitors(); 
+        startCountdown();
+    }
+
+
+    /* ==========================================================================
+       JAVASCRIPT - FASE 2 (SITE LIAM ARCHIVE)
+       ========================================================================== */
+    
+    function startTitleGlitch() {
+        const originalTitle = "LIAM FENTI | ARCHIVE_V15_STABLE";
+        const glitches = ["L!4M F3NT1 | C0RRUPT3D", "01001100 01101001", "SYS_FAIL | V15", "L*** F**** | UNKNOWN"];
+        setInterval(() => { if (Math.random() > 0.6) { document.title = glitches[Math.floor(Math.random() * glitches.length)]; setTimeout(() => { document.title = originalTitle; }, Math.random() * 400 + 100); } }, 3500);
+    }
+
+    function initTerminal() {
+        const input = document.getElementById('terminal-input');
+        if(!input) return;
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const val = input.value.toUpperCase().trim(); input.value = '';
+                if (val === 'BEAUTHENTIC') {
+                    const b = document.body; b.classList.add('glitch-shake'); setTimeout(() => b.classList.remove('glitch-shake'), 1500);
+                    document.getElementById('main-ticker-text').innerText = "::: BEAUTHENTIC PROTOCOL ACTIVATED ::: YOU ALREADY KNOW TOO MUCH ::: DATES WILL BE REVEALED ON MY INSTAGRAM ::: STAY TUNED, PROSPECT :::";
+                } else if (val !== '') { input.placeholder = "DENIED"; setTimeout(() => input.placeholder = "", 2000); }
+            }
+        });
+    }
+
+    const archiveSideVideos = [
         "https://www.dropbox.com/scl/fi/as6qstpnas95yhadj85k5/Pharrell_In_Studio_with_702_for_a_Star_song_PART_4.mp4?rlkey=2vbt6wqwzc0qg3c66faayxr0t&st=1ynduhac&raw=1",
         "https://www.dropbox.com/scl/fi/8uiidtqfeg1r56ljogdmf/Pharrell_Williams_Launches_New_ICECREAM_Skate_Team_with_Unreleased_Beat.mp4?rlkey=dusegknrk8h9cviqfueutoweg&st=151bxwmb&raw=1",
         "https://www.dropbox.com/scl/fi/nnzjssrdn8nexv4jp3ll4/T-Funk-Friends-SF-Spitfire-Wheels-360p-h264-youtube.mp4?rlkey=fjmcngfnouzsp1c7ahk3wfzd9&st=pjo11g9s&raw=1"
     ];
 
-    function makeDraggable(monitor) {
-        const header = monitor.querySelector('.monitor-header');
-        let isDragging = false;
-        let startX, startY, initialLeft, initialTop;
-
-        const startDrag = (e) => {
-            isDragging = true;
-            const rect = monitor.getBoundingClientRect();
-            
-            clearTimeout(monitor.driftTimeout);
-            clearTimeout(monitor.fadeTimeout);
-            
-            monitor.style.transition = 'none';
-            monitor.style.transform = 'translate(0, 0)';
-            monitor.style.left = rect.left + 'px';
-            monitor.style.top = rect.top + 'px';
-            monitor.style.opacity = '0.95'; 
-
-            startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-            startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-            initialLeft = rect.left;
-            initialTop = rect.top;
-        };
-
-        const moveDrag = (e) => {
-            if (!isDragging) return;
-            const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-            const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-            
-            const dx = clientX - startX;
-            const dy = clientY - startY;
-            monitor.style.left = (initialLeft + dx) + 'px';
-            monitor.style.top = (initialTop + dy) + 'px';
-        };
-
-        const endDrag = () => {
-            if (isDragging) {
-                isDragging = false;
-                resumeDrift(monitor); 
-            }
-        };
-
-        header.addEventListener('mousedown', startDrag);
-        document.addEventListener('mousemove', moveDrag);
-        document.addEventListener('mouseup', endDrag);
-
-        header.addEventListener('touchstart', startDrag, {passive: true});
-        document.addEventListener('touchmove', moveDrag, {passive: true});
-        document.addEventListener('touchend', endDrag);
+    function archive_makeDraggable(monitor) {
+        const header = monitor.querySelector('.monitor-header'); let isDragging = false, startX, startY, initialLeft, initialTop;
+        const startDrag = (e) => { isDragging = true; const rect = monitor.getBoundingClientRect(); clearTimeout(monitor.driftTimeout); clearTimeout(monitor.fadeTimeout); monitor.style.transition = 'none'; monitor.style.transform = 'translate(0, 0)'; monitor.style.left = rect.left + 'px'; monitor.style.top = rect.top + 'px'; monitor.style.opacity = '0.95'; startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; startY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY; initialLeft = rect.left; initialTop = rect.top; };
+        const moveDrag = (e) => { if (!isDragging) return; const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX; const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY; const dx = clientX - startX; const dy = clientY - startY; monitor.style.left = (initialLeft + dx) + 'px'; monitor.style.top = (initialTop + dy) + 'px'; };
+        const endDrag = () => { if (isDragging) { isDragging = false; archive_resumeDrift(monitor); } };
+        header.addEventListener('mousedown', startDrag); document.addEventListener('mousemove', moveDrag); document.addEventListener('mouseup', endDrag);
+        header.addEventListener('touchstart', startDrag, {passive: true}); document.addEventListener('touchmove', moveDrag, {passive: true}); document.addEventListener('touchend', endDrag);
     }
 
-    function initSideMonitors() {
-        const monitors = document.querySelectorAll('.floating-monitor');
-        monitors.forEach((monitor, index) => {
-            makeDraggable(monitor);
-            monitor.dataset.side = (index % 2 === 0) ? 'left' : 'right';
-            setTimeout(() => { startDrift(monitor); }, index * 1200); 
-        });
+    function archive_initSideMonitors() {
+        const monitors = document.querySelectorAll('#phase-2 .floating-monitor');
+        monitors.forEach((monitor, index) => { archive_makeDraggable(monitor); monitor.dataset.side = (index % 2 === 0) ? 'left' : 'right'; setTimeout(() => { archive_startDrift(monitor); }, index * 1200); });
     }
 
-    function startDrift(monitor) {
-        const vid = monitor.querySelector('video');
-        const size = Math.floor(Math.random() * 140) + 130; 
-        monitor.style.width = size + 'px';
+    function archive_startDrift(monitor) {
+        const vid = monitor.querySelector('video'); const size = Math.floor(Math.random() * 140) + 130; monitor.style.width = size + 'px';
+        let maxW = window.innerWidth - size, startX;
+        if (monitor.dataset.side === 'left') { startX = Math.random() * (window.innerWidth * 0.25); } else { startX = (window.innerWidth * 0.75) + Math.random() * (window.innerWidth * 0.25) - size; }
+        startX = Math.max(0, Math.min(startX, maxW)); let startY = Math.random() * (window.innerHeight - size);
+        let driftX = (Math.random() * 120 - 60), driftY = (Math.random() * 120 - 60);
+        monitor.style.transition = 'none'; monitor.style.transform = `translate(0px, 0px)`; monitor.style.left = startX + 'px'; monitor.style.top = startY + 'px'; monitor.style.opacity = '0';
         
-        let maxW = window.innerWidth - size;
-        let startX;
+        vid.src = archiveSideVideos[Math.floor(Math.random() * archiveSideVideos.length)]; 
         
-        if (monitor.dataset.side === 'left') {
-            startX = Math.random() * (window.innerWidth * 0.25); 
-        } else {
-            startX = (window.innerWidth * 0.75) + Math.random() * (window.innerWidth * 0.25) - size; 
-        }
-        
-        startX = Math.max(0, Math.min(startX, maxW)); 
-        let startY = Math.random() * (window.innerHeight - size);
-        
-        let driftX = (Math.random() * 120 - 60); 
-        let driftY = (Math.random() * 120 - 60);
-
-        monitor.style.transition = 'none';
-        monitor.style.transform = `translate(0px, 0px)`;
-        monitor.style.left = startX + 'px';
-        monitor.style.top = startY + 'px';
-        monitor.style.opacity = '0';
-
-        // CORREÇÃO: Define o evento onloadedmetadata ANTES de definir o src do vídeo
         vid.onloadedmetadata = () => {
-            if (vid.duration > 13) { vid.currentTime = Math.random() * (vid.duration - 13); }
-            vid.play().catch(e => {});
-
+            if (vid.duration > 13) { vid.currentTime = Math.random() * (vid.duration - 13); } vid.play().catch(e => {});
             let duration = Math.floor(Math.random() * 5000) + 8000; 
-            
-            monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`;
-            void monitor.offsetWidth; 
-            
-            monitor.style.transform = `translate(${driftX}px, ${driftY}px)`;
-            monitor.style.opacity = '0.85'; 
-            
-            monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
-            vid.onloadedmetadata = null;
-            monitor.driftTimeout = setTimeout(() => { startDrift(monitor); }, duration + 400);
+            monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`; void monitor.offsetWidth; 
+            monitor.style.transform = `translate(${driftX}px, ${driftY}px)`; monitor.style.opacity = '0.85'; 
+            monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600); vid.onloadedmetadata = null; monitor.driftTimeout = setTimeout(() => { archive_startDrift(monitor); }, duration + 400);
         };
-
-        vid.src = sideVideos[Math.floor(Math.random() * sideVideos.length)];
-
-        monitor.driftTimeout = setTimeout(() => {
-            if (monitor.style.opacity === '0') {
-                vid.onloadedmetadata = null;
-                startDrift(monitor);
-            }
-        }, 15000);
+        monitor.driftTimeout = setTimeout(() => { if (monitor.style.opacity === '0') { vid.onloadedmetadata = null; archive_startDrift(monitor); } }, 15000);
     }
 
-    function resumeDrift(monitor) {
-        let driftX = (Math.random() * 80 - 40);
-        let driftY = (Math.random() * 80 - 40);
-        let duration = Math.floor(Math.random() * 4000) + 5000; 
-        
-        monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`;
-        void monitor.offsetWidth;
-        
-        monitor.style.transform = `translate(${driftX}px, ${driftY}px)`;
-        monitor.style.opacity = '0.85';
-        
-        monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600);
-        monitor.driftTimeout = setTimeout(() => { startDrift(monitor); }, duration + 400);
+    function archive_resumeDrift(monitor) {
+        let driftX = (Math.random() * 80 - 40), driftY = (Math.random() * 80 - 40), duration = Math.floor(Math.random() * 4000) + 5000; 
+        monitor.style.transition = `transform ${duration}ms linear, opacity 0.6s ease`; void monitor.offsetWidth;
+        monitor.style.transform = `translate(${driftX}px, ${driftY}px)`; monitor.style.opacity = '0.85';
+        monitor.fadeTimeout = setTimeout(() => { monitor.style.opacity = '0'; }, duration - 600); monitor.driftTimeout = setTimeout(() => { archive_startDrift(monitor); }, duration + 400);
     }
 
-    function runBoot() {
-        const perc = document.getElementById('boot-perc'), bar = document.getElementById('boot-progress'), screen = document.getElementById('boot-screen'), archive = document.getElementById('archive-container'), ticker = document.getElementById('ticker-news'), navItems = document.querySelectorAll('.fade-in-element');
-        let progress = 0;
-        const update = () => {
-            progress += 0.8; 
-            if (progress > 100) progress = 100;
-            perc.innerText = `${Math.floor(progress)}%`;
-            bar.style.width = `${progress}%`;
-            if (progress < 100) setTimeout(update, 80);
-            else {
-                setTimeout(() => {
-                    screen.style.transition = "opacity 1s"; screen.style.opacity = "0";
+    // CARREGAMENTO DA FASE 2 100% BLINDADO (Try/Catch)
+    function runArchiveBoot() {
+        try {
+            const perc = document.getElementById('archive-boot-perc');
+            const bar = document.getElementById('archive-boot-progress');
+            const screen = document.getElementById('archive-boot-screen');
+            const archive = document.getElementById('archive-container');
+            const ticker = document.getElementById('ticker-news');
+            const navItems = document.querySelectorAll('#phase-2 .fade-in-element');
+            
+            let progress = 0;
+            
+            const update = () => {
+                progress += 1.5; 
+                if (progress > 100) progress = 100;
+                
+                if(perc) perc.innerText = `${Math.floor(progress)}%`; 
+                if(bar) bar.style.width = `${progress}%`;
+                
+                if (progress < 100) {
+                    setTimeout(update, 50);
+                } else {
                     setTimeout(() => {
-                        screen.style.display = "none"; archive.style.opacity = "1"; ticker.style.opacity = "1";
-                        navItems.forEach((item, i) => setTimeout(() => item.classList.add('fade-in-visible'), (i+1)*400));
-                        tabAction(document.getElementById('audio-btn'), 'audio');
-                        initSideMonitors(); 
-                    }, 1000);
-                }, 800);
-            }
-        }; update();
+                        if(screen) { screen.style.transition = "opacity 0.8s"; screen.style.opacity = "0"; }
+                        setTimeout(() => {
+                            if(screen) screen.style.display = "none"; 
+                            if(archive) archive.style.opacity = "1"; 
+                            if(ticker) ticker.style.opacity = "1";
+                            
+                            navItems.forEach((item, i) => setTimeout(() => item.classList.add('fade-in-visible'), (i+1)*250));
+                            tabAction(document.getElementById('audio-btn'), 'audio'); 
+                            archive_initSideMonitors(); 
+                        }, 800);
+                    }, 500);
+                }
+            }; 
+            update();
+        } catch (e) {
+            console.error("Boot seguro ativado para evitar falhas:", e);
+        }
     }
 
     function startSystemInfo() {
-        setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'), 1000);
-        const updateFps = () => { document.getElementById('fps-counter').innerText = `FPS: ${(Math.random()*(60-28)+28).toFixed(1)}`; setTimeout(updateFps, 500); };
+        setInterval(() => {
+            const c = document.getElementById('clock');
+            if(c) c.innerText = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+        const updateFps = () => { 
+            const f = document.getElementById('fps-counter');
+            if(f) f.innerText = `FPS: ${(Math.random()*(60-28)+28).toFixed(1)}`; 
+            setTimeout(updateFps, 500); 
+        }; 
         updateFps();
     }
 
+    let clicks = 0; let locked = false;
     function triggerGlitch() {
         if(locked) return;
-        setTimeout(() => {
-            document.getElementById('main-body').classList.add('glitch-shake');
-            setTimeout(() => { document.getElementById('main-body').classList.remove('glitch-shake'); triggerGlitch(); }, 500);
-        }, 15000 + Math.random()*10000);
+        setTimeout(() => { document.body.classList.add('glitch-shake'); setTimeout(() => { document.body.classList.remove('glitch-shake'); triggerGlitch(); }, 500); }, 15000 + Math.random()*10000);
     }
 
     function liamViolation() {
-        if (locked) return; 
-        clicks++;
-        const b = document.getElementById('main-body'), l = document.getElementById('loader'), m = document.getElementById('loader-msg'), vTab = document.getElementById('visual-tab');
-        
-        b.classList.add('glitch-shake'); 
-        locked = true;
-        
-        if (clicks === 1) { 
-            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "DON'T DO THAT AGAIN."; 
-            setTimeout(reboot, 3000); 
-        } else if (clicks === 5) { 
-            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "WHY ARE YOU DOING THIS?"; 
-            setTimeout(reboot, 5000); 
-        } else if (clicks === 10) { 
-            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "STOP BEING CURIOUS - LOCKDOWN PROTOCOL ACTIVATED"; 
-            setTimeout(reboot, 6000); 
-        } else if (clicks === 15) { 
-            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK.";
-            document.documentElement.classList.add('purple-protocol');
-            vTab.style.display = 'block'; vTab.classList.add('fade-in-visible');
-            setTimeout(reboot, 5000); 
-        } else { 
-            l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "!!!!!!!!!!"; 
-            setTimeout(quickReset, 700); 
-        }
+        if (locked) return; clicks++;
+        const b = document.body, l = document.getElementById('loader'), m = document.getElementById('loader-msg'), vTab = document.getElementById('visual-tab');
+        b.classList.add('glitch-shake'); locked = true;
+        if (clicks === 1) { l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "DON'T DO THAT AGAIN."; setTimeout(rebootArchive, 3000); } 
+        else if (clicks === 5) { l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "WHY ARE YOU DOING THIS?"; setTimeout(rebootArchive, 5000); } 
+        else if (clicks === 10) { l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "STOP BEING CURIOUS - LOCKDOWN PROTOCOL ACTIVATED"; setTimeout(rebootArchive, 6000); } 
+        else if (clicks === 15) { l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "VISUAL.LOG UNLOCKED. DO NOT LOOK BACK."; document.documentElement.classList.add('purple-protocol'); vTab.style.display = 'block'; vTab.classList.add('fade-in-visible'); setTimeout(rebootArchive, 5000); } 
+        else { l.style.display = 'flex'; m.classList.add('blink-alert'); m.innerText = "!!!!!!!!!!"; setTimeout(quickResetArchive, 700); }
     }
 
-    function quickReset() { document.getElementById('main-body').classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader').style.display = 'none'; locked = false; }
-    function reboot() { document.getElementById('main-body').classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader-msg').innerText = "REBOOTING..."; setTimeout(() => { document.getElementById('loader').style.display = 'none'; locked = false; tabAction(document.getElementById('audio-btn'), 'audio'); }, 2000); }
+    function quickResetArchive() { document.body.classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader').style.display = 'none'; locked = false; }
+    function rebootArchive() { document.body.classList.remove('glitch-shake'); document.getElementById('loader-msg').classList.remove('blink-alert'); document.getElementById('loader-msg').innerText = "REBOOTING..."; setTimeout(() => { document.getElementById('loader').style.display = 'none'; locked = false; tabAction(document.getElementById('audio-btn'), 'audio'); }, 2000); }
 
     function syncVideo(audioId, vizId, vidId) {
         const audio = document.getElementById(audioId), viz = document.getElementById(vizId), video = document.getElementById(vidId);
         if(!audio || !viz || !video) return;
-        // CORREÇÃO: Adicionado .catch() para evitar quebra caso o autoplay seja bloqueado pelo navegador
-        audio.onplay = () => { viz.style.display = 'block'; video.play().catch(e => console.log("Autoplay bloqueado", e)); };
-        audio.onpause = () => { video.pause(); viz.style.display = 'none'; };
-        audio.onended = () => { video.pause(); viz.style.display = 'none'; };
+        audio.onplay = () => { viz.style.display = 'block'; video.play(); }; audio.onpause = () => { video.pause(); viz.style.display = 'none'; }; audio.onended = () => { video.pause(); viz.style.display = 'none'; };
     }
 
     function tabAction(el, type) {
-        if (locked) return;
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        if(el) el.classList.add('active');
-        const l = document.getElementById('loader'), v = document.getElementById('viewport');
-        l.style.display = 'flex'; document.getElementById('loader-msg').innerText = "LOADING..."; v.style.opacity = '0';
-        setTimeout(() => { l.style.display = 'none'; v.style.opacity = '1'; render(type); }, 1500);
+        if (locked) return; document.querySelectorAll('#phase-2 .nav-item').forEach(n => n.classList.remove('active')); if(el) el.classList.add('active');
+        const l = document.getElementById('loader'), v = document.getElementById('viewport'); l.style.display = 'flex'; document.getElementById('loader-msg').innerText = "LOADING..."; v.style.opacity = '0';
+        setTimeout(() => { l.style.display = 'none'; v.style.opacity = '1'; renderArchive(type); }, 1500);
     }
 
-    function render(type) {
-        const v = document.getElementById('viewport');
-        const scrollArea = document.getElementById('viewport-scroll');
+    function renderArchive(type) {
+        const v = document.getElementById('viewport'), scrollArea = document.getElementById('viewport-scroll');
         if (type === 'audio') {
             v.innerHTML = `
                 <h2>AUDIO.DAT</h2>
-                <div class="file-entry">
-                    <div id="viz1" class="audio-visualizer">
-                        <video id="vid1" loop muted playsinline>
-                            <source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4">
-                        </video>
-                    </div>
-                    <strong>CONFUSAO_MENTAL!</strong>
-                    <audio id="audio1" controls controlsList="nodownload noplaybackrate" preload="metadata" src="https://www.dropbox.com/scl/fi/433bxjfabb2ynd4bce3cv/liamfenti-new-era-confus-o_mental-133bpm.wav?rlkey=r7whqf7fr759tpolqy2tnag53&st=umito00q&raw=1"></audio>
-                </div>
-                <div class="file-entry">
-                    <div id="viz2" class="audio-visualizer">
-                        <video id="vid2" loop muted playsinline>
-                            <source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4">
-                        </video>
-                    </div>
-                    <strong>PROSPECTO_RICOSEM_BREVE!</strong>
-                    <audio id="audio2" controls controlsList="nodownload noplaybackrate" preload="metadata" src="https://www.dropbox.com/scl/fi/shz1dmdjxh0r1z405jimn/liamfenti-new-era-prospecto_ricos_embreve-133bpm.wav?rlkey=dce11zlowrpu6wazltb6x3i7i&st=1rjmbf7b&raw=1"></audio>
-                </div>
-                <div class="file-entry">
-                    <div id="viz3" class="audio-visualizer">
-                        <video id="vid3" loop muted playsinline>
-                            <source src="https://www.dropbox.com/scl/fi/z3l1l7l07mozaalh820e5/videoplayback.mp4?rlkey=iu6efot92aplohnjh69d2qm0l&st=8lmmv1yf&raw=1" type="video/mp4">
-                        </video>
-                    </div>
-                    <strong>INTROSPECTIVO_EU_ERA!</strong>
-                    <audio id="audio3" controls controlsList="nodownload noplaybackrate" preload="metadata" src="https://www.dropbox.com/scl/fi/wvfictlepx4gzr9z4oohb/liamfenti-new-era-introspectivo_euera-138bpm.wav?rlkey=n7jat9tivwzea3c4079x8rau0&st=au1wi86l&raw=1"></audio>
-                </div>`;
-            syncVideo('audio1', 'viz1', 'vid1');
-            syncVideo('audio2', 'viz2', 'vid2');
-            syncVideo('audio3', 'viz3', 'vid3');
-        } else if (type === 'visual') {
-            v.innerHTML = `<h2>VISUAL.LOG</h2><div class="file-entry"><strong>FILE: UNKNOWN_RECOVERY.mov</strong><video controls controlsList="nodownload noplaybackrate" preload="metadata" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video></div>`;
-        } else if (type === 'feed') {
-            v.innerHTML = `<h2>FEED.TXT</h2><div id="feed-logs"></div>`;
-            const logs = ["[SYS] Connection established.", "[SYS] Analyzing intruder behavior...", "[WARN] Your session is being recorded.", "[!] URGENT: UNAUTHORIZED ACCESS DETECTED.", `[SEC] Trace complete. Device: ${navigator.platform}`, "[MSG] This site has been hacked. Files are corrupted.", "[MSG] Intruder detected in IDENTITY.INF sector.", "[MSG] We must take action against the intruder before the system crashes.", "[SYS] Firewall status: COMPROMISED.", "[SYS] Attempting to isolate data packets...", "[MSG] So... it's you again.", "[SYS] LOG_END."];
-            logs.forEach((log, i) => { 
-                setTimeout(() => { 
-                    const logsDiv = document.getElementById('feed-logs'); 
-                    if(logsDiv){ 
-                        const line = document.createElement('p'); 
-                        line.style.margin = "5px 0"; 
-                        line.innerHTML = `<span style="color:${document.documentElement.classList.contains('purple-protocol') ? '#a020f0' : '#00ff95'}">></span> ${log}`; 
-                        logsDiv.appendChild(line); 
-                        scrollArea.scrollTop = scrollArea.scrollHeight; 
-                    } 
-                }, (i + 1) * 3500); 
-            });
-        } else if (type === 'identity') {
-            v.innerHTML = `<h2>IDENTITY.INF</h2><div id="tw" style="font-size:1.1rem; line-height:1.6; min-height:300px; text-align:justify;"></div>`;
-            typeWriterIdentity();
-        }
+                <div class="file-entry"><div id="viz1" class="audio-visualizer"><video id="vid1" loop muted playsinline><source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4"></video></div><strong>CONFUSAO_MENTAL!</strong><audio id="audio1" controls controlsList="nodownload noplaybackrate" preload="auto" src="https://www.dropbox.com/scl/fi/433bxjfabb2ynd4bce3cv/liamfenti-new-era-confus-o_mental-133bpm.wav?rlkey=r7whqf7fr759tpolqy2tnag53&st=umito00q&raw=1"></audio></div>
+                <div class="file-entry"><div id="viz2" class="audio-visualizer"><video id="vid2" loop muted playsinline><source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4"></video></div><strong>PROSPECTO_RICOSEM_BREVE!</strong><audio id="audio2" controls controlsList="nodownload noplaybackrate" preload="auto" src="https://www.dropbox.com/scl/fi/shz1dmdjxh0r1z405jimn/liamfenti-new-era-prospecto_ricos_embreve-133bpm.wav?rlkey=dce11zlowrpu6wazltb6x3i7i&st=1rjmbf7b&raw=1"></audio></div>
+                <div class="file-entry"><div id="viz3" class="audio-visualizer"><video id="vid3" loop muted playsinline><source src="https://www.dropbox.com/scl/fi/z3l1l7l07mozaalh820e5/videoplayback.mp4?rlkey=iu6efot92aplohnjh69d2qm0l&st=8lmmv1yf&raw=1" type="video/mp4"></video></div><strong>INTROSPECTIVO_EU_ERA!</strong><audio id="audio3" controls controlsList="nodownload noplaybackrate" preload="auto" src="https://www.dropbox.com/scl/fi/wvfictlepx4gzr9z4oohb/liamfenti-new-era-introspectivo_euera-138bpm.wav?rlkey=n7jat9tivwzea3c4079x8rau0&st=au1wi86l&raw=1"></audio></div>`;
+            syncVideo('audio1', 'viz1', 'vid1'); syncVideo('audio2', 'viz2', 'vid2'); syncVideo('audio3', 'viz3', 'vid3');
+        } else if (type === 'visual') { v.innerHTML = `<h2>VISUAL.LOG</h2><div class="file-entry"><strong>FILE: UNKNOWN_RECOVERY.mov</strong><video controls controlsList="nodownload noplaybackrate" preload="auto" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video></div>`;
+        } else if (type === 'feed') { v.innerHTML = `<h2>FEED.TXT</h2><div id="feed-logs"></div>`; const logs = ["[SYS] Connection established.", "[SYS] Analyzing intruder behavior...", "[WARN] Your session is being recorded.", "[!] URGENT: UNAUTHORIZED ACCESS DETECTED.", `[SEC] Trace complete. Device: ${navigator.platform}`, "[MSG] This site has been hacked. Files are corrupted.", "[MSG] Intruder detected in IDENTITY.INF sector.", "[MSG] We must take action against the intruder before the system crashes.", "[SYS] Firewall status: COMPROMISED.", "[SYS] Attempting to isolate data packets...", "[MSG] So... it's you again.", "[SYS] LOG_END."]; logs.forEach((log, i) => { setTimeout(() => { const logsDiv = document.getElementById('feed-logs'); if(logsDiv){ const line = document.createElement('p'); line.style.margin = "5px 0"; line.innerHTML = `<span style="color:${document.documentElement.classList.contains('purple-protocol') ? '#a020f0' : '#00ff95'}">></span> ${log}`; logsDiv.appendChild(line); scrollArea.scrollTop = scrollArea.scrollHeight; } }, (i + 1) * 3500); });
+        } else if (type === 'identity') { v.innerHTML = `<h2>IDENTITY.INF</h2><div id="tw" style="font-size:1.1rem; line-height:1.6; min-height:300px; text-align:justify;"></div>`; typeWriterIdentityArchive(); }
     }
 
-    function typeWriterIdentity() {
+    function typeWriterIdentityArchive() {
         const el = document.getElementById('tw'); if(!el) return;
         const sequence = [{ t: "I am just an ordinary ", e: false }, { t: "painter", e: true, c: "producer" }, { t: "—or so they say. I see the world exactly as it was presented to me: a sequence of ", e: false }, { t: "colors", e: true, c: "frequencies" }, { t: " that have lost their luster. To me, the world lost its color a long time ago, leaving behind only the gray of static and the green of terminal code.\n\nThis site is not a ", e: false }, { t: "business", e: true, c: "sanctuary" }, { t: ". It’s a place for the ", e: false }, { t: "normal", e: true, c: "misfits" }, { t: ". It’s a place for the ", e: false }, { t: "engineers", e: true, c: "creatives" }, { t: " who find beauty in the ", e: false }, { t: "perfection", e: true, c: "glitch" }, { t: ", in the noise, and in what others call distortion.\n\nIf you feel like a stranger in your own reality, you have found the right archive.", e: false }];
         let step = 0, charIdx = 0, isDeleting = false;
         function type() {
-            // CORREÇÃO: Impede vazamento de memória cancelando o loop se o usuário trocar de aba
-            if (!document.body.contains(el)) return; 
-
             const current = sequence[step]; if (!current) { el.innerHTML += '<span class="blink-underline"></span>'; return; }
             const fullText = current.t;
-            if (!isDeleting) {
-                if (charIdx < fullText.length) { const char = fullText.charAt(charIdx); el.innerHTML += char === '\n' ? '<br>' : char; charIdx++; setTimeout(type, 50); } 
-                else if (current.e) { setTimeout(() => { isDeleting = true; type(); }, 700); } 
-                else { step++; charIdx = 0; setTimeout(type, 150); }
-            } else {
-                if (charIdx > 0) { el.innerHTML = el.innerHTML.endsWith('<br>') ? el.innerHTML.slice(0, -4) : el.innerHTML.slice(0, -1); charIdx--; setTimeout(type, 80); } 
-                else { isDeleting = false; sequence[step] = { t: current.c, e: false }; setTimeout(type, 300); }
-            }
-        }
-        type();
+            if (!isDeleting) { if (charIdx < fullText.length) { const char = fullText.charAt(charIdx); el.innerHTML += char === '\n' ? '<br>' : char; charIdx++; setTimeout(type, 50); } else if (current.e) { setTimeout(() => { isDeleting = true; type(); }, 700); } else { step++; charIdx = 0; setTimeout(type, 150); }
+            } else { if (charIdx > 0) { el.innerHTML = el.innerHTML.endsWith('<br>') ? el.innerHTML.slice(0, -4) : el.innerHTML.slice(0, -1); charIdx--; setTimeout(type, 80); } else { isDeleting = false; sequence[step] = { t: current.c, e: false }; setTimeout(type, 300); } }
+        } type();
     }
 
-    window.onload = () => { 
-        startTitleGlitch(); 
-        initTerminal();     
-        startSystemInfo(); 
-        triggerGlitch(); 
-        runBoot(); 
+    function startPhase2Archive() {
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        try { startTitleGlitch(); } catch(e){}
+        try { initTerminal(); } catch(e){}
+        try { startSystemInfo(); } catch(e){}
+        try { triggerGlitch(); } catch(e){}
+        runArchiveBoot(); 
+    }
+
+    // INICIA APENAS A FASE 1 AO CARREGAR O SITE
+    window.onload = () => {
+        initMatrixRain();
+        initBootQuiz();
     };
 </script>
 </body>
