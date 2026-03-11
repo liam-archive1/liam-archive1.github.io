@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIAM FENTI | ARCHIVE_V15_STABLE</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&display=swap');
+
+        /* --- FILTRO VHS INTENSO & VINHETA SUAVE --- */
+        body::before {
+            content: " "; display: block; position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05)),
+                radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+            z-index: 9999; 
+            background-size: 100% 3px, 4px 100%, 100% 100%; 
+            pointer-events: none;
+            animation: vhs-flicker 0.1s infinite;
+        }
+
+        @keyframes vhs-flicker {
+            0% { opacity: 0.98; }
+            50% { opacity: 1; }
+            100% { opacity: 0.99; }
+        }
+
+        /* --- BREAKING NEWS TICKER --- */
+        .news-ticker {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: #b20000; color: #fff; font-family: sans-serif;
+            font-size: 11px; font-weight: bold; padding: 6px 0; z-index: 1000;
+            border-bottom: 2px solid #ff4d4d; overflow: hidden; white-space: nowrap;
+        }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: moveTicker 30s linear infinite; }
+        @keyframes moveTicker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* --- EFEITO DE TREMIDA (SHAKE) --- */
+        .glitch-shake {
+            animation: shake 0.15s cubic-bezier(.36,.07,.19,.97) both infinite;
+            filter: sepia(1) saturate(3) hue-rotate(-50deg) brightness(1.2) !important;
+            background: #1a0000 !important;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 1px, 0); }
+            20%, 80% { transform: translate3d(2px, -1px, 0); }
+            30%, 50%, 70% { transform: translate3d(-3px, 2px, 0); }
+            40%, 60% { transform: translate3d(3px, -2px, 0); }
+        }
+
+        /* --- ALERTA PISCANTE --- */
+        .blink-alert {
+            animation: blinkRed 0.2s infinite;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        @keyframes blinkRed {
+            0% { color: #ff0000; }
+            50% { color: #ffffff; }
+            100% { color: #ff0000; }
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 55px 10px 20px; font-family: 'Crimson Pro', serif;
+            background: #001f3d;
+            color: #e0e0e0; display: flex; justify-content: center; 
+            height: 100vh; overflow: hidden; transition: background 0.3s;
+            perspective: 1000px;
+        }
+
+        .main-archive {
+            width: 100%; max-width: 900px; height: 82vh; background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
+            transform: translateZ(20px) scale(0.99) rotateX(0.5deg) rotateY(-0.5deg);
+            border-radius: 10px;
+        }
+
+        header {
+            padding: 20px; border-bottom: 1px solid rgba(0, 255, 149, 0.3);
+            display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;
+        }
+
+        #title-liam { cursor: pointer; user-select: none; }
+        .system-info { text-align: right; }
+        #clock { font-family: monospace; font-size: 14px; color: #00ff95; text-shadow: 0 0 5px #00ff95; }
+        #fps-counter { font-family: monospace; font-size: 10px; color: #00ff95; opacity: 0.7; }
+
+        .archive-body { display: flex; flex: 1; overflow: hidden; }
+        nav { width: 180px; background: rgba(0, 0, 0, 0.5); border-right: 1px solid rgba(255, 255, 255, 0.1); flex-shrink: 0; }
+
+        .nav-item {
+            display: block; padding: 15px; color: #aaa; text-decoration: none;
+            font-size: 14px; cursor: pointer; border-left: 2px solid transparent;
+        }
+        .nav-item.active { color: #00ff95; border-left: 2px solid #00ff95; background: rgba(0, 255, 149, 0.1); }
+        #visual-tab { display: none; } 
+
+        main { 
+            flex: 1; 
+            padding: 25px; 
+            position: relative; 
+            overflow-y: auto;
+            max-height: calc(82vh - 80px);
+        }
+
+        .file-entry { background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .audio-visualizer {
+            width: 100%;
+            height: 180px;
+            background: #000;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 149, 0.2);
+            display: none; 
+        }
+        .audio-visualizer video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(1) contrast(1.2) brightness(0.7);
+            pointer-events: none;
+        }
+
+        audio, video { width: 100%; margin-top: 10px; filter: grayscale(1) contrast(1.4) brightness(0.8); }
+        audio { height: 30px; filter: invert(1) hue-rotate(90deg) opacity(0.6); }
+
+        #loader {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 1000; align-items: center; justify-content: center;
+            font-family: monospace; flex-direction: column; text-align: center;
+        }
+
+        .blink-underline::after { content: "_"; animation: blink 0.8s step-end infinite; }
+        @keyframes blink { from, to { opacity: 1; } 50% { opacity: 0; } }
+
+        @media (max-width: 768px) { .archive-body { flex-direction: column; } nav { width: 100%; display: flex; overflow-x: auto; } body { overflow: auto; } .main-archive { height: auto; transform: none; } }
+    </style>
+</head>
+<body id="main-body">
+
+<div class="news-ticker">
+    <div class="ticker-text">
+        ::: BREAKING NEWS ::: AUTHORITIES SEARCHING FOR INTRUDER IN LIAM_ARCHIVE SECTOR ::: BEATS LEAKED: 140BPM_FRAGMENTS ::: DO NOT ENGAGE WITH CORRUPTED DATA ::: INTRUDER LAST SEEN NEAR IDENTITY.INF ::: RECOVERY IN PROGRESS :::
+    </div>
+</div>
+
+<div class="main-archive" id="archive-container">
+    <header>
+        <div>
+            <div style="font-size: 9px; opacity: 0.5;">ROOT:/LIAM/ARCHIVE/</div>
+            <h1 id="title-liam" style="margin:0; font-size:22px; color:#00ff95;" onclick="liamViolation()">LIAM FENTI</h1>
+        </div>
+        <div class="system-info">
+            <div id="clock">00:00:00</div>
+            <div id="fps-counter">FPS: 60.0</div>
+        </div>
+    </header>
+
+    <div class="archive-body">
+        <nav>
+            <div id="audio-btn" class="nav-item" onclick="tabAction(this, 'audio')">AUDIO.DAT</div>
+            <div id="visual-tab" class="nav-item" onclick="tabAction(this, 'visual')">VISUAL.LOG</div>
+            <div class="nav-item" onclick="tabAction(this, 'feed')">FEED.TXT</div>
+            <div id="id-btn" class="nav-item" onclick="tabAction(this, 'identity')">IDENTITY.INF</div>
+            <a href="https://www.instagram.com/liamfenti" target="_blank" class="nav-item" style="color:#00ff95">SHOP_NOW.EXE</a>
+        </nav>
+
+        <main id="viewport-scroll">
+            <div id="loader" class="blink-underline"><span id="loader-msg"></span></div>
+            <div id="viewport"></div>
+        </main>
+    </div>
+</div>
+
+<script>
+    let clicks = 0;
+    let locked = false;
+
+    function startSystemInfo() {
+        const updateClock = () => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
+        };
+        setInterval(updateClock, 1000); updateClock();
+
+        const fps = document.getElementById('fps-counter');
+        const updateFps = () => {
+            const val = (Math.random() * (60 - 28) + 28).toFixed(1);
+            fps.innerText = `FPS: ${val}`;
+            setTimeout(updateFps, Math.random() * (800 - 300) + 300);
+        };
+        updateFps();
+    }
+
+    function triggerGlitch() {
+        if(locked) return;
+        const b = document.getElementById('main-body');
+        const delay = Math.floor(Math.random() * (25000 - 15000 + 1)) + 15000;
+        setTimeout(() => {
+            b.classList.add('glitch-shake');
+            setTimeout(() => {
+                b.classList.remove('glitch-shake');
+                triggerGlitch();
+            }, 500);
+        }, delay);
+    }
+
+    function liamViolation() {
+        if (locked) return;
+        clicks++;
+        const b = document.getElementById('main-body');
+        const l = document.getElementById('loader');
+        const m = document.getElementById('loader-msg');
+        b.classList.add('glitch-shake');
+        locked = true;
+
+        if (clicks === 1) {
+            l.style.display = 'flex';
+            m.classList.add('blink-alert');
+            m.innerText = "DON'T DO THAT AGAIN.";
+            setTimeout(() => { reboot(); }, 3000);
+        } else if (clicks === 5) {
+            l.style.display = 'flex';
+            m.classList.add('blink-alert');
+            m.innerText = "WHY ARE YOU DOING THIS?";
+            setTimeout(() => { reboot(); }, 5000);
+        } else {
+            l.style.display = 'flex';
+            m.classList.add('blink-alert');
+            m.innerText = "!!!!!!!!!!";
+            setTimeout(() => { quickReset(); }, 700);
+        }
+    }
+
+    function quickReset() {
+        const b = document.getElementById('main-body');
+        const l = document.getElementById('loader');
+        const m = document.getElementById('loader-msg');
+        b.classList.remove('glitch-shake');
+        m.classList.remove('blink-alert');
+        l.style.display = 'none';
+        locked = false;
+    }
+
+    function reboot() {
+        const b = document.getElementById('main-body');
+        const m = document.getElementById('loader-msg');
+        b.classList.remove('glitch-shake');
+        m.classList.remove('blink-alert');
+        m.style.color = "#00ff95";
+        m.innerText = "REBOOTING SYSTEM...";
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            locked = false;
+            tabAction(document.getElementById('audio-btn'), 'audio');
+        }, 2000);
+    }
+
+    function tabAction(el, type) {
+        if (locked) return;
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        if(el) el.classList.add('active');
+
+        const loader = document.getElementById('loader');
+        const msg = document.getElementById('loader-msg');
+        const v = document.getElementById('viewport');
+
+        msg.style.color = "#00ff95";
+        msg.innerText = "EXTRACTING_DATA...";
+        loader.style.display = 'flex';
+        v.style.opacity = '0';
+
+        setTimeout(() => {
+            loader.style.display = 'none';
+            v.style.opacity = '1';
+            render(type);
+        }, 2000);
+    }
+
+    function syncVideo(audioId, vizId, vidId) {
+        const audio = document.getElementById(audioId);
+        const vizContainer = document.getElementById(vizId);
+        const video = document.getElementById(vidId);
+        
+        if(!audio || !vizContainer || !video) return;
+
+        audio.onplay = () => { 
+            vizContainer.style.display = 'block'; 
+            video.play(); 
+        };
+        audio.onpause = () => { 
+            video.pause(); 
+            vizContainer.style.display = 'none'; 
+        };
+        audio.onended = () => { 
+            video.pause(); 
+            vizContainer.style.display = 'none'; 
+        };
+    }
+
+    function render(type) {
+        const v = document.getElementById('viewport');
+        const scrollArea = document.getElementById('viewport-scroll');
+        
+        if (type === 'audio') {
+            v.innerHTML = `<h2>AUDIO.DAT</h2>
+            <div class="file-entry">
+                <div id="viz1" class="audio-visualizer">
+                    <video id="vid1" loop muted playsinline>
+                        <source src="https://www.dropbox.com/scl/fi/vjpfue8wsivo1pfxtatem/iPod-shuffle-iMac-360p-h264-youtube-edited.mp4?rlkey=im2qbzqcws5zgmd4gq98r1khp&st=nr5jr70a&raw=1" type="video/mp4">
+                    </video>
+                </div>
+                <strong>LIAM - LSZ - CHANNEL_GIRL.wav</strong>
+                <audio id="audio1" controls src="https://www.dropbox.com/scl/fi/5f3vsxntr1twkehvkjaij/LIAM-LSZ-CHANNEL_GIRL.wav?rlkey=tbgv2y9xf5jvm3ent21le5sco&st=v5m2kf2x&raw=1"></audio>
+            </div>
+            <div class="file-entry">
+                <div id="viz2" class="audio-visualizer">
+                    <video id="vid2" loop muted playsinline>
+                        <source src="https://www.dropbox.com/scl/fi/p1292i074lcdqucgjbz3k/Text-Text-Revolution-skratch13-240p-h264-youtube.mp4?rlkey=pid0kqgbhj9h6ka39i7rrmte0&st=dftvhynk&raw=1" type="video/mp4">
+                    </video>
+                </div>
+                <strong>LIAM - LSZ - UM_POUCO_MAIS.wav</strong>
+                <audio id="audio2" controls src="https://www.dropbox.com/scl/fi/xn9koxjafrfdfq4kt2lrc/LIAM-LSZ-UM_POUCO_MAIS.wav?rlkey=8agl1nov89u7dqk925n7sn15d&st=r6os7ph1&raw=1"></audio>
+            </div>`;
+            syncVideo('audio1', 'viz1', 'vid1');
+            syncVideo('audio2', 'viz2', 'vid2');
+
+        } else if (type === 'identity') {
+            v.innerHTML = `<h2>IDENTITY.INF</h2><div id="tw" style="font-size:1.1rem; line-height:1.6; min-height:300px; text-align:justify;"></div>`;
+            typeWriterIdentity();
+        } else if (type === 'feed') {
+            v.innerHTML = `<h2>FEED.TXT</h2><div id="feed-logs"></div>`;
+            const userOS = navigator.platform;
+            const logs = [
+                "[SYS] Connection established.",
+                "[SYS] Analyzing intruder behavior...",
+                "[WARN] Your session is being recorded.",
+                "[!] URGENT: UNAUTHORIZED ACCESS DETECTED.",
+                `[SEC] Trace complete. Device: ${userOS}`,
+                "[MSG] This site has been hacked. Files are corrupted.",
+                "[MSG] Intruder detected in IDENTITY.INF sector.",
+                "[MSG] We must take action against the intruder before the system crashes.",
+                "[SYS] Firewall status: COMPROMISED.",
+                "[SYS] Attempting to isolate data packets...",
+                "[MSG] So... it's you again.",
+                "[SYS] LOG_END."
+            ];
+            logs.forEach((log, i) => {
+                setTimeout(() => {
+                    const logsDiv = document.getElementById('feed-logs');
+                    if(logsDiv){
+                        const line = document.createElement('p');
+                        line.style.margin = "5px 0";
+                        line.innerHTML = `<span style="color:#00ff95">></span> ${log}`;
+                        logsDiv.appendChild(line);
+                        scrollArea.scrollTop = scrollArea.scrollHeight;
+                    }
+                }, (i + 1) * 3500);
+            });
+        } else if (type === 'visual') {
+            v.innerHTML = `<h2>VISUAL.LOG</h2>
+            <div class="file-entry">
+                <strong>FILE: UNKNOWN_RECOVERY.mov</strong>
+                <video controls preload="metadata" src="https://www.dropbox.com/scl/fi/e3pegixcj8qqkal20ptv6/Video-11-03-26-03-51-11.mov?rlkey=s09r7dm55dsvpccax72ot8izx&st=uckd3u68&raw=1"></video>
+            </div>`;
+        }
+    }
+
+    function typeWriterIdentity() {
+        const el = document.getElementById('tw');
+        if(!el) return;
+        
+        const sequence = [
+            { t: "I am just an ordinary ", e: false },
+            { t: "painter", e: true, c: "producer" }, 
+            { t: "—or so they say. I see the world exactly as it was presented to me: a sequence of ", e: false },
+            { t: "colors", e: true, c: "frequencies" }, 
+            { t: " that have lost their luster. To me, the world lost its color a long time ago, leaving behind only the gray of static and the green of terminal code.\n\nThis site is not a ", e: false },
+            { t: "business", e: true, c: "sanctuary" }, 
+            { t: ". It was built for the ", e: false },
+            { t: "normal", e: true, c: "misfits" }, 
+            { t: ", for those who feel the weight of not fitting into pre-fabricated molds. This is the place for the ", e: false },
+            { t: "engineers", e: true, c: "creatives" }, 
+            { t: " who find beauty in the ", e: false },
+            { t: "perfection", e: true, c: "glitch" }, 
+            { t: ", in the noise, and in what others call distortion.\n\nIf you feel like a stranger in your own reality, you have found the right archive.", e: false }
+        ];
+
+        let step = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+
+        function type() {
+            const current = sequence[step];
+            if (!current) {
+                el.innerHTML += '<span class="blink-underline"></span>';
+                return;
+            }
+
+            const fullText = current.t;
+
+            if (!isDeleting) {
+                if (charIdx < fullText.length) {
+                    const char = fullText.charAt(charIdx);
+                    el.innerHTML += char === '\n' ? '<br>' : char;
+                    charIdx++;
+                    setTimeout(type, Math.random() * (70 - 40) + 40);
+                } else if (current.e) {
+                    setTimeout(() => { isDeleting = true; type(); }, 700);
+                } else {
+                    step++;
+                    charIdx = 0;
+                    setTimeout(type, 150);
+                }
+            } else {
+                if (charIdx > 0) {
+                    const currentContent = el.innerHTML;
+                    if (currentContent.endsWith('<br>')) {
+                        el.innerHTML = currentContent.slice(0, -4);
+                    } else {
+                        el.innerHTML = currentContent.slice(0, -1);
+                    }
+                    charIdx--;
+                    setTimeout(type, 80);
+                } else {
+                    isDeleting = false;
+                    sequence[step] = { t: current.c, e: false };
+                    setTimeout(type, 300);
+                }
+            }
+        }
+        type();
+    }
+
+    window.onload = () => {
+        startSystemInfo();
+        triggerGlitch();
+        tabAction(document.getElementById('audio-btn'), 'audio');
+    };
+</script>
+</body>
+</html>
